@@ -1,0 +1,202 @@
+
+.monitorCustomization .canClick {
+  cursor: pointer;
+}
+
+.monitorCustomization .title {
+  font-size: 14px;
+  color: #444444;
+  font-weight: bold;
+}
+
+.monitorCustomization > > > .el-checkbox__inner {
+  border-radius: 10px;
+}
+
+.monitorCustomization .choose {
+  border-top: 1px solid #e2e3e4;
+  border-bottom: 1px solid #e2e3e4;
+  margin-top: 8px;
+  background: #fff;
+}
+
+.monitorCustomization .choose-platform {
+  /*margin-left: 50px;*/
+  /*margin-right: 50px;*/
+  height: 60px;
+  border-bottom: 1px solid #e2e3e4;
+}
+
+.monitorCustomization .choose-item-box {
+  margin-left: 40px;
+  margin-right: 40px;
+  height: 64%;
+  border-bottom: 1px solid #e2e3e4;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.monitorCustomization .choose-platform .left-title {
+  float: left;
+  line-height: 60px;
+}
+
+.monitorCustomization .right-search {
+  float: right;
+  height: 31px;
+  padding-top: 15px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.monitorCustomization .search-icon {
+  position: absolute;
+  right: 60px;
+  font-size: 22px;
+  top: 19px;
+}
+
+.monitorCustomization > > > .el-input__inner {
+  width: 350px;
+  height: 31px;
+  margin-right: 50px;
+  border-radius: 15px;
+}
+
+.monitorCustomization .show {
+  border-top: 1px solid #e2e3e4;
+  border-bottom: 1px solid #e2e3e4;
+  background: #fff;
+  float: left;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.monitorCustomization .show-choose-platform {
+  margin-right: 40px;
+}
+
+.monitorCustomization .has-choose {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 34px;
+  display: inline-block;
+}
+
+.monitorCustomization .has-choose-name {
+  float: right;
+  height: 50px;
+  display: inline;
+}
+
+.monitorCustomization .has-choose-name .box {
+  height: 100%;
+}
+
+.monitorCustomization .has-choose-name .hint {
+  height: 50px;
+  display: inline-block;
+  line-height: 50px;
+}
+
+.monitorCustomization .has-choose-name i {
+  color: #fb5e5e;
+  margin-right: 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.monitorCustomization .has-choose-name input {
+  margin-left: 15px;
+  border-radius: 14px;
+  padding-left: 14px;
+  border: #c3c5c8 solid 1px;
+  width: 180px;
+  height: 32px;
+  font-size: 13px;
+  margin-right: 150px;
+}
+
+.monitorCustomization .has-choose-name .enter {
+  margin-left: 30px;
+  background: #4643ff;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 25px;
+  padding-right: 25px;
+  display: inline;
+  color: white;
+  align-content: center;
+  border-radius: 8px;
+  border: #fff solid 1px;
+}
+
+.monitorCustomization .has-choose-name .cancel {
+  margin-left: 30px;
+  font-size: 10px;
+  background: #fff;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 25px;
+  padding-right: 25px;
+  display: inline;
+  color: #4643ff;
+  align-content: center;
+  border-radius: 8px;
+  border: #4643ff solid 1px;
+}
+
+.monitorCustomization .has-choose span {
+  position: relative;
+  font-size: 10px;
+  margin-left: 20px;
+  font-size: 10px;
+  color: #4643ff;
+  font-weight: normal;
+  display: inline-block;
+  padding-left: 5px;
+  height: 20px;
+  line-height: 20px;
+  border: #4642ff solid 1px;
+  padding-right: 30px;
+  border-radius: 14px;
+}
+
+.monitorCustomization .has-choose i {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  background: #4642ff;
+  border-radius: 0px 10px 10px 0px;
+  border: #4642ff solid 1px;
+  line-height: 18px;
+  font-size: 5px;
+  padding-right: 10px;
+  padding-left: 5px;
+  float: right;
+  color: white;
+}
+
+.monitorCustomization .show-box {
+  border-top: 1px solid #e2e3e4;
+  border-bottom: 1px solid #e2e3e4;
+  background: #fff;
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 8px;
+}
+
+.monitorCustomization .showList {
+
+}
+
+.monitorCustomization .showList-title {
+  height: 50px;
+  line-height: 50px;
+}
+
+.monitorCustomization .list-box {
+  padding: 30px;
+}
+

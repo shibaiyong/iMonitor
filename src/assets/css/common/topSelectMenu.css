@@ -1,0 +1,17 @@
+.topSelectTop {
+
+}
+
+.topSelectTop .item {
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.topSelectTop .select {
+  border-bottom: 2px #4642ff solid;
+  color: #4642ff;
+}
