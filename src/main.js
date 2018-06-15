@@ -28,7 +28,10 @@ Vue.directive('title', {
   }
 })
 
-Vue.prototype.getLineUnitWidth = function (num){
+Vue.prototype.getLineUnitWidth = function (num,hasSildBar){
+  if(hasSildBar){
+    return window.screen.width * 0.93 / num
+  }
   return window.screen.width * 0.78 / num
 }
 

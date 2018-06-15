@@ -28,9 +28,9 @@ exports.install = function (Vue, options) {
     return newName
   },
 
-    // Vue.prototype.baseUrl = 'http://10.50.1.196:8075';//测试环境
+    Vue.prototype.baseUrl = 'http://10.6.7.93:8075/imonitor';//测试环境-孙千
     // Vue.prototype.baseUrl = 'http://10.50.1.191:8076/imonitor';//测试正式环境
-    Vue.prototype.baseUrl = 'http://124.207.149.160:8076/imonitor';//线上苏州台正式环境
+    // Vue.prototype.baseUrl = 'http://124.207.149.160:8076/imonitor';//线上苏州台正式环境
     // Vue.prototype.baseUrl = 'http://124.207.149.160:8073/imonitor';//线上SMG正式环境
 
 

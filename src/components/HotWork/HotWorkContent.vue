@@ -67,7 +67,6 @@
     data() {
       return {
         fullscreenLoading:false,
-
         //热门作品数据
         hotworkData: [],
         hotworkColumn: [],
@@ -104,23 +103,8 @@
         }
       },
 
-      window: onresize = function () {
-        // return (() => {
-        //
-        // })
-        //console.log('hahahaahah')
-      },
-
-
       //热门作品页
       loadHotWorkData() {
-
-        // const loading = this.$loading({
-        //   lock: true,
-        //   text: '玩命加载中',
-        //   spinner: 'el-icon-loading',
-        //   background: 'rgba(0, 0, 0, 0.7)'
-        // });
 
         var params = {
           startTime: this.startTime,
@@ -137,7 +121,6 @@
             params.platformId = this.plantformId;
           }
         }
-        ;
         //console.log('热门作品页参数')
         //console.log(params)
         this.fullscreenLoading = true;
@@ -150,14 +133,14 @@
           this.total = 0;
           if (response.code == 200 && response.data.content) {
             this.handleData_hotwork(response.data,this.order)
+          }else{
+            this.getTableOptions()
           }
-          // loading.close();
           this.fullscreenLoading = false;
 
         }, function (err) {
           //console.log('失败');
           //console.log(err);
-          // loading.close();
           this.fullscreenLoading = false;
         })
       },
@@ -176,7 +159,19 @@
             value.author = "-";
           }
           value.analyze = "分析"
-        })
+        });
+
+
+        this.getTableOptions();
+
+        // alert(index)
+        this.options.columnStyle.styles[index+3].color = '#4642ff';
+        this.options.headerStyle.indexs.push(index+3);
+        this.options.headerStyle.styles.push({color:'#4642ff'})
+      },
+
+
+      getTableOptions(){
         this.hotworkColumn = [
           {prop: 'inx', label: '序号'},
           {prop: 'platform', label: '平台'},
@@ -189,7 +184,6 @@
           {prop: 'author', label: '作者'},
           // {prop: 'analyze', label: '分析'},
         ];
-
         this.options = {
           id: 'hotwork_content',
           total: this.total,
@@ -232,12 +226,11 @@
             {value: 2, label: '非原创'},
           ]
         };
+      }
 
-        // alert(index)
-        this.options.columnStyle.styles[index+3].color = '#4642ff';
-        this.options.headerStyle.indexs.push(index+3);
-        this.options.headerStyle.styles.push({color:'#4642ff'})
-      },
+
+
+
     },
   }
 </script>

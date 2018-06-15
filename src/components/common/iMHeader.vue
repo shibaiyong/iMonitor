@@ -15,16 +15,16 @@
 
     <div class="iM_header_datapicker" v-if="!breadcrumbData.length">
       已选择:
-      <!--<el-select :value="selectedPickerType.name"-->
-                 <!--placeholder="请选择"-->
-                 <!--@change="selectedPickerChanged">-->
-        <!--<el-option-->
-          <!--v-for="(item,index) in pickerTypes"-->
-          <!--:key="index"-->
-          <!--:label="item.name"-->
-          <!--:value="item.value">-->
-        <!--</el-option>-->
-      <!--</el-select>-->
+      <el-select :value="selectedPickerType.name"
+                 placeholder="请选择"
+                 @change="selectedPickerChanged">
+        <el-option
+          v-for="(item,index) in pickerTypes"
+          :key="index"
+          :label="item.name"
+          :value="item.value">
+        </el-option>
+      </el-select>
 
       <el-date-picker :type="selectedPickerType.value"
                       align="right"
@@ -39,17 +39,17 @@
       </el-date-picker>
     </div>
 
-    <!--<div class="iM_refresh_time" v-if="!breadcrumbData.length">数据更新时间:2018-05-01 4:04</div>-->
+    <div class="iM_refresh_time" v-if="!breadcrumbData.length">数据更新时间:2018-05-01 4:04</div>
 
 
-    <!--<div class="breadcrumb" v-if="breadcrumbData.length">-->
-      <!--<el-breadcrumb separator-class="el-icon-arrow-right">-->
-        <!--<el-breadcrumb-item v-for="(item,index) in breadcrumbData" :to="{path:item.path}" :key="index">{{item.name}}-->
-        <!--</el-breadcrumb-item>-->
-      <!--</el-breadcrumb>-->
-    <!--</div>-->
+    <div class="breadcrumb" v-if="breadcrumbData.length">
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item v-for="(item,index) in breadcrumbData" :to="{path:item.path}" :key="index">{{item.name}}
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
 
-    <!--<div class="report"><span>生成报告</span></div>-->
+    <div class="report"><span>生成报告</span></div>
 
   </div>
 

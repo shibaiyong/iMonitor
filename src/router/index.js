@@ -47,48 +47,48 @@ export default new Router({
       name: 'SpreadAnalyze',
       component: resolve => require(['@/components/SpreadAnalyze/SpreadAnalyze'], resolve)
     },
-    // //重点媒体监测
-    // {
-    //   path: '/mediamonitor',
-    //   name: 'MediaMonitor',
-    //   component: resolve => require(['@/components/MediaMonitor/MediaMonitor'], resolve)
-    // },
-    //
-    // //平台对比分析
-    // {
-    //   path: '/platform',
-    //   name: 'Platform',
-    //   component: resolve => require(['@/components/Platform/Platform'], resolve)
-    // },
-    //
-    // //作品对比分析
-    // {
-    //   path: '/works',
-    //   name: 'Works',
-    //   // component: Works
-    //   component: resolve => require(['@/components/Works/Works'], resolve)
-    // },
-    //
-    // //版权对比分析
-    // {
-    //   path: '/copyright',
-    //   name: 'Copyright',
-    //   component: resolve => require(['@/components/Copyright/Copyright'], resolve)
-    // },
-    //
-    // //定制监测
-    // {
-    //   path: '/customization',
-    //   name: 'Customization',
-    //   component: resolve => require(['@/components/Customization/Customization'], resolve)
-    // },
-    //
-    // //单个页面
-    // {
-    //   path: '/single/:type',
-    //   name: 'MediaMonitorSingle',
-    //   component: resolve => require(['@/components/MediaMonitor/MediaMonitorSingle'], resolve)
-    // },
+    //重点媒体监测
+    {
+      path: '/mediamonitor',
+      name: 'MediaMonitor',
+      component: resolve => require(['@/components/MediaMonitor/MediaMonitor'], resolve)
+    },
+
+    //平台对比分析
+    {
+      path: '/platform',
+      name: 'Platform',
+      component: resolve => require(['@/components/Platform/Platform'], resolve)
+    },
+
+    //作品对比分析
+    {
+      path: '/works',
+      name: 'Works',
+      // component: Works
+      component: resolve => require(['@/components/Works/Works'], resolve)
+    },
+
+    //版权对比分析
+    {
+      path: '/copyright',
+      name: 'Copyright',
+      component: resolve => require(['@/components/Copyright/Copyright'], resolve)
+    },
+
+    //定制监测
+    {
+      path: '/customization',
+      name: 'Customization',
+      component: resolve => require(['@/components/Customization/Customization'], resolve)
+    },
+
+    //单个页面
+    {
+      path: '/single/:type',
+      name: 'MediaMonitorSingle',
+      component: resolve => require(['@/components/MediaMonitor/MediaMonitorSingle'], resolve)
+    },
 
     //单篇新闻详情页
     {

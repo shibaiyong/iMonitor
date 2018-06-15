@@ -52,7 +52,7 @@
                @click="selectedItemClick(index)">
             <span class="selected_item_title">{{item}}</span>
             <!--{{item}}-->
-            <i v-if="isActive" class="fa fa-times"/>
+            <i v-if="isActive" class="el-icon-close"/>
           </div>
 
           <!--清空按钮-->

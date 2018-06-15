@@ -477,8 +477,8 @@
           var cardinalSize = screen.width < 1920 ? 40 : 60;
           var size = cardinalSize * (1 + (length / 8) * 1.5)
           size = Math.floor(size)
-          this.homeWorkNumFontSize = size + "px";
-          this.homeWorkNumBackgroundSize = size + "px";
+          // this.homeWorkNumFontSize = size + "px";
+          // this.homeWorkNumBackgroundSize = size + "px";
         } else {
           this.spreadData.splice(0, 0, {title: '作品数', count: data.articleTotalNum})
         }
@@ -986,8 +986,8 @@
           this.statisticBoxWidth = Math.floor(width) + "px"
           this.statisticBoxPadding = Math.floor(padding) + "px"
         }
-        // this.homeWorkNumFontSize = screen.width < 1920 ? "40px" : "60px";
-        // this.homeWorkNumBackgroundSize = screen.width < 1920 ? "40px" : "60px";
+        this.homeWorkNumFontSize = screen.width < 1920 ? "40px" : "60px";
+        this.homeWorkNumBackgroundSize = screen.width < 1920 ? "40px" : "60px";
       }
     },
   }

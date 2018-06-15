@@ -23,9 +23,9 @@
           {name:'传播趋势分析',path:'/trend'},
           {name:'传播地域分析',path:'/region'},
           {name:'媒体转载分析',path:'/reprint'},
-          // {name:'重点媒体监测',path:'/mediamonitor'},
-          // {name:'平台对比分析',path:'/platform'},
-          // {name:'作品对比分析',path:'/works'},
+          {name:'重点媒体监测',path:'/mediamonitor'},
+          {name:'平台对比分析',path:'/platform'},
+          {name:'作品对比分析',path:'/works'},
         ],
         activeIndex:0,
         title:''
