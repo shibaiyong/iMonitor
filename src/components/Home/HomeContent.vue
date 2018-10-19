@@ -1,103 +1,65 @@
 <template>
-  <div class="overView"
-       id="overView"
-       v-loading.fullscreen.lock="fullscreenLoading">
+  <div class="overView bgc_rzl"
+       id="overView">
 
-    <!--传播情况统计-->
-    <div class="block_rzl" v-if="spreadData.length">
-      <div class="title_rzl">传播情况统计</div>
-      <div class="statistic clearfix" id="statisticParentBox">
-        <div class="statistic_box" v-for="item in spreadData"
-             :style="'height:'+statisticBoxWidth+';width:'+statisticBoxWidth+';paddingLeft:'+statisticBoxPadding+';paddingRight:'+statisticBoxPadding">
-          <div class="statistic_boxItem">
-            <div class="boxItemContent">
-              <span class="title_rzl">{{item.title}}</span><br/><br/>
-              <span class="title_rzl" style="color: #4642FF">{{item.count>=10000?(item.count/10000).toFixed(2)+'万':item.count}}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!--各平台作品数对比-->
-    <div class="block_rzl clearfix" v-if="platformData.length&&isGroupPlantform">
-      <div class="home_works">
-        <div class="title_rzl">各平台作品数占比</div>
-        <div class="home_works_ratio">
-          <pieChart idName="ptdbs"
-                    :height="300"
-                    :chartData="platformData">
-          </pieChart>
-        </div>
-      </div>
-      <div class="home_works">
-        <div class="title_rzl"  style="margin-left: 20px;">作品数</div>
-        <div class="home_works_count" style="margin-left: 20px;">
-          <div class="home_works_count_content" v-for="item in workCountsData.split('')"
-               :style="'width:'+100/workCountsData.split('').length+'%'+';font-size:'+homeWorkNumFontSize">
-            <div class="home_works_count_content_num" :style="'background-size:'+homeWorkNumBackgroundSize">{{item}}
-            </div>
+    <!--传播情况统计  + 作品发布占比-->
+    <div class="block_rzl clearfix" style="margin: 0">
+
+      <!--传播情况统计-->
+      <div :class="sidebarType===1002?'spread_single':'spread'"
+           v-if="spreadData.length">
+        <div class="title_rzl">传播情况统计</div>
+        <div class="screenShot clearfix" id="CBQKTJ">
+          <div class="spread_item" :class="sidebarType===1002?'spread_item_single':(spreadData.length<=4?'spread_item_group_four':'spread_item_group')"
+               v-for="(item,index) in spreadData">
+            <span class="spread_item_icon" :style="{backgroundPositionY:-index*60+'px'}"></span>
+            <span class="fontSize14" style="color: #666;">{{item.title}}</span><br/>
+            <span class="fontSize16" style="color: #444;">{{parseInt(item.count)===0?'-':(item.count>=10000?(item.count/10000).toFixed(2)+'万':item.count)}}</span>
           </div>
         </div>
 
       </div>
+
+      <!--作品发布占比-->
+      <div class="works linkPointer" v-if="platformData.length&&sidebarType!==1002">
+        <div class="title_rzl">作品发布占比</div>
+        <div class="screenShot" id="ZPFBZB">
+          <pieChart idName="ptdbs" :height="200" :chartData="platformData"></pieChart>
+        </div>
+      </div>
     </div>
+
 
     <!--原创文章占比-->
-    <div class="block_rzl" v-if="originalData.length">
-      <div class="title_rzl">原创文章占比</div>
-      <div class="original_article clearfix">
-        <div class="original_article_l">
-          <pieChart idName="ycwzzb" :height="300" :chartData="originalData"></pieChart>
-        </div>
-        <div class="original_article_r" style="padding-top: 40px">
-          <el-table
-            :data="weekedCircle"
-            style="width: 100%">
-            <el-table-column
-              prop="title"
-              label=""
-              width="180">
-            </el-table-column>
-            <el-table-column
-              label="周环比"
-              align="center"
-              width="180">
-              <template slot-scope="scope">
-                <span class="percentage"
-                      :style="{ 'color': getColor(scope.row.sequential),'margin-right':'5px' }">
-                  {{ scope.row.sequential }}
-                </span>
-                <span :style="{'margin-left':'5px'}">{{ scope.row.sequentialtext }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="prevWeek"
-              align="center"
-              label="上周">
-            </el-table-column>
-            <el-table-column
-              prop="week"
-              align="center"
-              label="本周">
-            </el-table-column>
-          </el-table>
-        </div>
+    <div class="block_rzl clearfix linkPointer" v-if="originalData.length">
+      <div class="title_rzl">原创作品占比</div>
+      <div class="original_article_l screenShot" id="YCZPZB">
+        <pieChart idName="ycwzzb" :height="200" :chartData="originalData"></pieChart>
+      </div>
+      <div class="original_article_r">
+        <tables :data="weekedCircle"
+                :showPageControl="false"
+                :columnData="weekedCircleColumn"
+                :options="weekedCircleOptions">
+        </tables>
       </div>
 
     </div>
 
     <!--传播时间趋势-->
-    <div class="block_rzl" v-if="timeTrendDatas.categoryArr.length">
+    <div class="block_rzl linkPointer" v-if="timeTrendDatas.categoryArr.length">
       <div class="title_rzl">传播时间趋势</div>
-      <lineChart idName="timeTrendCharts" :height="400" :chartData="timeTrendDatas" ref="echartsBox"></lineChart>
+      <div class="screenShot" id="CBSJQS">
+        <lineChart idName="timeTrendCharts" :height="400" :chartData="timeTrendDatas" ref="echartsBox"></lineChart>
+      </div>
     </div>
 
     <!--传播地域分析-->
-    <div class="block_rzl" v-if="areaData.length">
+    <div class="block_rzl linkPointer" v-if="areaData.length">
       <div class="title_rzl">传播地域分布</div>
       <div class="region clearfix">
-        <div class="region_map">
+        <div class="region_map screenShot" id="CBDYFB">
           <mapCharts idName="map" :height="600" :chartData="areaData"></mapCharts>
         </div>
 
@@ -109,15 +71,19 @@
             </div>
             <div class="region_chart_title_r">
               <div>{{provienceTransName}}地区转载数量</div>
-              <span>{{provienceTransnumData?provienceTransnumData:'无'}}</span>
+              <span class="color_base">{{provienceTransnumData?provienceTransnumData:'无'}}</span>
             </div>
           </div>
 
-          <barChart :height="550"
-                    idName="time"
-                    :chartData="areaRankData"
-                    :options="{direction:'vertical',showRankingList:true,emphasizeColor:true}">
-          </barChart>
+          <div class="screenShot" id="CBDYFBPH">
+            <barChart :height="550"
+                      idName="time"
+                      :chartData="areaRankData"
+                      :options="{direction:'vertical',showRankingList:true,emphasizeColor:true}">
+            </barChart>
+          </div>
+
+          <div class="fontSize14" style="text-align: center;color: #444padding-top: 20px">注：此地域是指媒体地域属性</div>
 
         </div>
       </div>
@@ -131,34 +97,48 @@
         <div class="reprint_per"
              style="border-top: #E2E3E4 1px solid;border-bottom: #E2E3E4 1px solid"
              v-if="transMediaTypeData.length">
-          <div class="title_rzl">转载媒体占比</div>
+          <div class="fontSize20" style="color: #444;margin: 20px 0;line-height: 18px">转载媒体占比</div>
           <!--<div class="halfBox-left">-->
-          <pieChart idName="reprint_per1" :height="300" :chartData="transMediaTypeData"/>
+          <div class="screenShot" id="ZZMTZB">
+            <pieChart idName="reprint_per1"
+                      :height="200"
+                      @click-piechart="synopsisMediaClick"
+                      :chartData="transMediaTypeData">
+            </pieChart>
+          </div>
+
           <!--</div>-->
         </div>
         <div class="reprint_per"
              style="border-top: #E2E3E4 1px solid;border-bottom: #E2E3E4 1px solid"
              v-if="transChannelTypeData.length">
-          <div class="title_rzl" >转载渠道占比</div>
+          <div class="fontSize20" style="color: #444;margin: 20px 0;line-height: 18px">转载渠道占比</div>
           <!--<div class="halfBox-right">-->
-          <pieChart idName="reprint_per2" :height="300" :chartData="transChannelTypeData"/>
+          <div class="screenShot" id="ZZQDZB">
+            <pieChart idName="reprint_per2"
+                      :height="200"
+                      @click-piechart="synopsisChinnal"
+                      :chartData="transChannelTypeData"></pieChart>
+          </div>
           <!--</div>-->
         </div>
         <div class="reprint_per" v-if="platformTransData.categoryArr.length">
-          <div class="title_rzl" >平台转载排行</div>
-          <div class="halfBox-left">
+          <div class="fontSize20" style="color: #444;margin:20px 0;line-height: 18px">平台转载排行</div>
+          <div class="halfBox-left screenShot" id="PTZZPH">
             <barChart :height="600"
                       idName="ptzzph"
                       :chartData="platformTransData"
-                      :options="{direction:'vertical',showLegend:false}"/>
+                      @click-barchart="platformHandleClick"
+                      :options="{direction:'vertical',showLegend:false}"></barChart>
           </div>
         </div>
         <div class="reprint_per" v-if="mediaTransData.categoryArr.length">
-          <div class="title_rzl">媒体转载排行</div>
-          <div class="halfBox-right">
+          <div class="fontSize20" style="color: #444;margin: 20px 0;line-height: 18px">媒体转载排行</div>
+          <div class="halfBox-right screenShot" id="MTZZPH">
             <barChart :height="600"
                       idName="mtzzph"
                       :chartData="mediaTransData"
+                      @click-barchart="mediaHandleClick"
                       :options="{direction:'vertical',showLegend:false}">
             </barChart>
           </div>
@@ -173,34 +153,28 @@
   import lineChart from '@/components/common/ZCChartsLine'
   import mapCharts from '@/components/common/mapCharts'
   import barChart from '@/components/common/ZCChartsBar'
+  import Tables from '@/components/common/ZCTables'
 
   export default {
     name: 'Home-content',
-    components: {pieChart, lineChart, mapCharts, barChart},
+    components: {pieChart, lineChart, mapCharts, barChart,Tables},
     props: {
-      isGroupPlantform: {type: Boolean, require: true},
+      sidebarType: {type: String / Number, require: true},
       plantformId: {type: String / Number, require: true},
-      startTime: {type: String, require: true},
-      accountType: {type: String, require: true},
+      datePickerParams: {type: Object, require: true},
     },
     watch: {
       plantformId(val, oldVal) {
         this.loadAllData(val);
       },
-      startTime(val) {
+      datePickerParams(val) {
         if (this.plantformId) {
           this.loadAllData(this.plantformId);
         }
       },
-      accountType(val) {
-        if (this.plantformId) {
-          this.loadAllData(this.plantformId);
-        }
-      }
     },
     data() {
       return {
-        fullscreenLoading:false,
         statisticBoxWidth: "0px",
         statisticBoxPadding: "0px",
         homeWorkNumFontSize: "0px",
@@ -214,6 +188,8 @@
         //原创文章占比
         originalData: [],
         weekedCircle: [],
+        weekedCircleColumn:[],
+        weekedCircleOptions:{},
         //传播时间趋势数据
         timeTrendDatas: {categoryArr: [], valueArr: []},
         //传播地域分析数据
@@ -228,169 +204,164 @@
         //转载渠道占比
         transChannelTypeData: [],
         //平台转载排行
-        platformTransData: {categoryArr: [], valueArr: []},
+        platformTransData: {categoryArr: [], platformIdArr: [], valueArr: []},
         //媒体转载排行
         mediaTransData: {categoryArr: [], valueArr: []},
       }
     },
 
     methods: {
-      getPerPadding: function () {
-        var padding = screen.width < 1920 ? 25 : 100;
-        return padding + "px"
-      },
-      getPerWidth: function () {
-        var width = screen.width < 1920 ? 25 : 100;
-        return "calc(50% - " + (width * 2) + "px)";
-      },
-      getColor: (sequential) => {
-        return !sequential.startsWith("-") ? '#fb5959' : '#46dd31';
-      },
-      getPlatformPercent: function () {
-        return {
-          pieIdName: 'platformPercent',
-          pieName: '转载占比',
-          pieFormatterFun: (params, ticket, callback) => {
-            return '{black|' + params.name + '：}{black|' + params.value + '篇}\n{blue|' + params.percent + '%}';
-          },
-          pieRich: {
-            black: {
-              align: 'center',
-              fontSize: 14,
-              padding: [10, 0],
-              color: '#444444'
-            },
-            blue: {
-              align: 'center',
-              fontSize: 16,
-              padding: [8, 0, 0, 0],
-              fontWeight: 'bold',
-            }
-          },
-          // radius: ['40%', '45%'],
-          center: ['50%', '50%'],
-          data: [{
-            value: 103,
-            name: '名城苏州网'
-          }, {
-            value: 96,
-            name: '微信'
-          }, {
-            value: 142,
-            name: '看苏州APP'
-          }, {
-            value: 78,
-            name: '无线苏州APP'
-          }, {
-            value: 109,
-            name: '微博'
-          }],
-          pieColor: ['#4642ff', '#00c6ff', '#46dd31', '#ffd541', '#ff9241']
+      // 转载媒体占比(某一媒体点击)
+      synopsisMediaClick(pieObj) {
+        let name = pieObj.name;
+        let mediaType = this.transMediaTypeData[pieObj.index].code;
+        let params = {
+          listName: '转载媒体占比',
+          listType: 'synopsisMedia',
+          resourceUrl: '/',
+          resourceName: '传播情况总览',
+          plantformId: '',
+          platformTypeId: '',
+          groupId: '',
+          startTime: this.datePickerParams.startTime,
+          accountType: this.datePickerParams.accountType,
+          pageNo: 1,
+          pageSize: 10,
+          mediaType: mediaType,
+          name: name,
+        };
+        // groupId: 指组ID, queryId：指具体ID， 2者不能同时存在
+        if (this.sidebarType == 1002) {
+          // 1002表示查具体ID
+          params.plantformId = this.plantformId;
+        } else if (this.sidebarType == 1001) {
+          params.platformTypeId = this.plantformId;
+        } else if (this.sidebarType == 1003) {
+          params.groupId = this.plantformId;
+        } else if (this.sidebarType == 1000) {
+          params.groupId = 0;
         }
-      },
-      getOriginalPercent: function () {
-        return {
-          pieIdName: 'originalPercent',
-          pieName: '原创与非原创',
-          pieFormatterFun: (params, ticket, callback) => {
-            return '{black|' + params.name + '：}{black|' + params.value + '篇}\n{blue|' + params.percent + '%}';
-          },
-          pieRich: {
-            black: {
-              align: 'center',
-              fontSize: 14,
-              padding: [10, 0],
-              color: '#444444'
-            },
-            blue: {
-              align: 'center',
-              fontSize: 16,
-              padding: [8, 0, 0, 0],
-              fontWeight: 'bold',
-            }
-          },
-          data: [{
-            value: 103,
-            name: '原创'
-          }, {
-            value: 96,
-            name: '非原创'
-          }],
-          pieColor: ['#4642ff', '#00c6ff']
+        let newUrl = 'mediaMonitorSingle?';
+        for (let key in params) {
+          newUrl += key + '=' + params[key] + '&';
         }
+        newUrl = newUrl.substring(0, newUrl.length - 1);
+        this.zc_log(this.sidebarType);
+        this.zc_log(params);
+        window.open(newUrl);
       },
-      getOriginalPercentB: function () {
-        return {
-          pieIdName: 'originalPercentB',
-          pieName: '原创与非原创',
-          pieFormatterFun: (params, ticket, callback) => {
-            return '{black|' + params.name + '：}{black|' + params.value + '篇}\n{blue|' + params.percent + '%}';
-          },
-          pieRich: {
-            black: {
-              align: 'center',
-              fontSize: 14,
-              padding: [10, 0],
-              color: '#444444'
-            },
-            blue: {
-              align: 'center',
-              fontSize: 16,
-              padding: [8, 0, 0, 0],
-              fontWeight: 'bold',
-            }
-          },
-          data: [{
-            value: 103,
-            name: '原创'
-          }, {
-            value: 96,
-            name: '非原创'
-          }],
-          pieColor: ['#4642ff', '#00c6ff']
+      // 转载渠道占比(某一渠道点击)
+      synopsisChinnal(pieObj) {
+        let name = pieObj.name;
+        let channel = this.transChannelTypeData[pieObj.index].code;
+        let params = {
+          listName: '转载渠道占比',
+          listType: 'synopsisChinnal',
+          resourceUrl: '/',
+          resourceName: '传播情况总览',
+          plantformId: '',
+          platformTypeId: '',
+          groupId: '',
+          startTime: this.datePickerParams.startTime,
+          accountType: this.datePickerParams.accountType,
+          pageNo: 1,
+          pageSize: 10,
+          channel: channel,
+          name: name,
+        };
+        // groupId: 指组ID, queryId：指具体ID， 2者不能同时存在
+        if (this.sidebarType == 1002) {
+          // 1002表示查具体ID
+          params.plantformId = this.plantformId;
+        } else if (this.sidebarType == 1001) {
+          params.platformTypeId = this.plantformId;
+        } else if (this.sidebarType == 1003) {
+          params.groupId = this.plantformId;
+        } else if (this.sidebarType == 1000) {
+          params.groupId = 0;
         }
-      },
-      getOriginalPercentA: function () {
-        return {
-          pieIdName: 'originalPercentA',
-          pieName: '原创与非原创',
-          pieFormatterFun: (params, ticket, callback) => {
-            return '{black|' + params.name + '：}{black|' + params.value + '篇}\n{blue|' + params.percent + '%}';
-          },
-          pieRich: {
-            black: {
-              align: 'center',
-              fontSize: 14,
-              padding: [10, 0],
-              color: '#444444'
-            },
-            blue: {
-              align: 'center',
-              fontSize: 16,
-              padding: [8, 0, 0, 0],
-              fontWeight: 'bold',
-            }
-          },
-          data: [{
-            value: 103,
-            name: '原创'
-          }, {
-            value: 96,
-            name: '非原创'
-          }],
-          pieColor: ['#4642ff', '#00c6ff']
+        let newUrl = 'mediaMonitorSingle?';
+        for (let key in params) {
+          newUrl += key + '=' + params[key] + '&';
         }
+        newUrl = newUrl.substring(0, newUrl.length - 1);
+        this.zc_log(params);
+        window.open(newUrl);
       },
-      getEchartsObj() {
-        return this.$refs.echartsBox.echartsObj
+      // 平台转载排行(某一平台点击)
+      platformHandleClick(barObj) {
+        let name = barObj.name;
+        let plantformId = this.platformTransData.platformIdArr[barObj.index];
+        let params = {
+          listName: '平台转载排行',
+          listType: 'reprintPlantform',
+          resourceUrl: '/',
+          resourceName: '传播情况总览',
+          plantformId: plantformId,
+          startTime: this.datePickerParams.startTime,
+          accountType: this.datePickerParams.accountType,
+          pageNo: 1,
+          pageSize: 10,
+          name: name,
+        };
+        let newUrl = 'mediaMonitorSingle?';
+        for (let key in params) {
+          newUrl += key + '=' + params[key] + '&';
+        }
+        newUrl = newUrl.substring(0, newUrl.length - 1);
+        this.zc_log(params);
+        window.open(newUrl);
+      },
+      // 媒体转载排行(某一媒体点击)
+      mediaHandleClick(barObj) {
+        let name = barObj.name;
+        let mediaName = this.mediaTransData.categoryArr[barObj.index];
+        let params = {
+          listName: '媒体转载排行',
+          listType: 'reprintMedia',
+          resourceUrl: '/',
+          resourceName: '传播情况总览',
+          plantformId: '',
+          platformTypeId: '',
+          groupId: '',
+          startTime: this.datePickerParams.startTime,
+          accountType: this.datePickerParams.accountType,
+          pageNo: 1,
+          pageSize: 10,
+          name: name,
+        };
+        // groupId: 指组ID, queryId：指具体ID， 2者不能同时存在
+        if (this.sidebarType == 1002) {
+          // 1002表示查具体ID
+          params.plantformId = this.plantformId;
+        } else if (this.sidebarType == 1001) {
+          params.platformTypeId = this.plantformId;
+        } else if (this.sidebarType == 1003) {
+          params.groupId = this.plantformId;
+        } else if (this.sidebarType == 1000) {
+          params.groupId = '';
+        }
+
+        let newUrl = 'mediaMonitorSingle?';
+        for (let key in params) {
+          newUrl += key + '=' + params[key] + '&';
+        }
+        newUrl = newUrl.substring(0, newUrl.length - 1);
+        this.zc_log(params);
+        window.open(newUrl);
       },
 
 
+
+
+      /*加载数据*/
       loadAllData(val) {
+
         //传播情况
         this.loadSpreadData(val);
-        if (this.isGroupPlantform == false) {
-          this.platformTransData = {categoryArr: [], valueArr: []}
+        if (this.sidebarType === 1002) {
+          this.platformTransData = {categoryArr: [], platformIdArr: [], valueArr: []};
+          this.platformData = [];
         } else {
           //各平台作品数
           this.loadPlatformData(val);
@@ -399,124 +370,111 @@
         }
 
         //原创作品数
-        this.loadOriginalData(val)
+        this.loadOriginalData(val);
         //周环比
         this.loadCircleData(val);
         //传播地域分析
-        this.loadAreaData(val)
+        this.loadAreaData(val);
         //传播时间趋势
         this.loadTimeTrendData(val);
         // 媒体转载排行
-        this.loadMediaTransData(val)
+        this.loadMediaTransData(val);
         //媒体转载占比
-        this.loadTransMediaTypeData(val)
+        this.loadTransMediaTypeData(val);
         //渠道转载占比
-        this.loadTransChannelTypeData(val)
+        this.loadTransChannelTypeData(val);
       },
 
       //情况统计
       loadSpreadData(ID) {
-        // const loading = this.$loading({
-        //   fullscreen:true,
-        //   // lock: true,
-        //   text: '玩命加载中',
-        //   spinner: 'el-icon-loading',
-        //   background: 'rgba(0, 0, 0, 0.7)',
-        //   customClass:'rgba(1, 1, 1, 1)'
-        // });
-        this.fullscreenLoading = true;
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
-        ;
-        //console.log('=======情况统计')
-        //console.log(params)
-        //console.log('=======情况统计')
+        this.zc_log('=======情况统计');
+        this.zc_log(params);
+        this.zc_log('=======情况统计');
 
         this.$http.get(this.baseUrl + '/spread/accounted', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('情况统计数据')
-          //console.log(response)
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('情况统计数据');
+          this.zc_log(response);
           this.spreadData = [];
-          this.workCountsData = '0'
-          this.fullscreenLoading = false;
-
+          this.workCountsData = '0';
           if (response.code == 200 && response.data) {
             this.handleData_spread(response.data)
           }
-          // loading.close();
 
         }, function (err) {
-          //console.log('情况统计数据失败');
-          //console.log(err);
-          // loading.close();
+          this.zc_log('情况统计数据失败');
+          this.zc_log(err);
 
         })
       },
       handleData_spread(data) {
-        // //console.log('情况统计数据')
-        // //console.log(data)
-
-        this.spreadData = [
-          {title: '阅读数', count: data.readNum},
-          {title: '转载数', count: data.transNum},
-          {title: '收藏数', count: data.collectionNum},
-          {title: '分享数', count: data.shareNum},
-          {title: '评论数', count: data.commentNum},
-          {title: '点赞数', count: data.rewardNum},
-          {title: '打赏数', count: data.thumbsNum},
+        let spreadData = [
+          {title: '作品数', count: data.articleTotalNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          {title: '转载数', count: data.transNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          {title: '阅读数', count: data.readNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          // {title: '收藏数', count: data.collectionNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          // {title: '分享数', count: data.shareNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          {title: '评论数', count: data.commentNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          // {title: '点赞数', count: data.rewardNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
+          // {title: '打赏数', count: data.thumbsNum, pic: this.baseUrl+'/static/images/spread_readNum.png'},
         ];
-        if (this.isGroupPlantform) {
-          this.workCountsData = data.articleTotalNum.toString();
-          var length = 8 - this.workCountsData.length
-          var cardinalSize = screen.width < 1920 ? 40 : 60;
-          var size = cardinalSize * (1 + (length / 8) * 1.5)
-          size = Math.floor(size)
-          // this.homeWorkNumFontSize = size + "px";
-          // this.homeWorkNumBackgroundSize = size + "px";
-        } else {
-          this.spreadData.splice(0, 0, {title: '作品数', count: data.articleTotalNum})
-        }
-        this.layoutSubviews();
+
+        let result = [];
+
+        spreadData.forEach(function (item) {
+          if(item.count != null){
+            result.push(item);
+          }
+        });
+        this.spreadData = result;
+        // this.layoutSubviews();
       },
 
 
       //各平台作品数占比
       loadPlatformData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
-        // console.log('======各平台作品数占比')
-        // console.log(params)
-        // console.log('======各平台作品数占比')
+        this.zc_log('======各平台作品数占比');
+        this.zc_log(params);
+        this.zc_log('======各平台作品数占比');
         this.$http.get(this.baseUrl + '/spread/platform/articlenum/accounted', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          // console.log('各平台占比数据')
-          // console.log(response);
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('各平台占比数据');
+          this.zc_log(response);
           this.platformData = [];
           if (response.code == 200 && response.data) {
             this.handleData_platform(response.data)
           }
         }, function (err) {
-          //console.log('各平台占比数据失败');
-          //console.log(err);
+          this.zc_log('各平台占比数据失败');
+          this.zc_log(err);
         })
       },
       handleData_platform(data) {
 
-        // //console.log('各平台占比');
-        // //console.log(data)
-        var platformData = [];
+        // //this.zc_log('各平台占比');
+        // //this.zc_log(data)
+        let platformData = [];
         data.forEach(function (value, index) {
           if (value.platformName) {
             if (value.count) {
@@ -527,44 +485,50 @@
               platformData.push({name: value.platformTypeName, value: value.count})
             }
           }
-        })
+        });
 
         this.platformData = platformData;
 
-        // //console.log(this.platformData)
+        // //this.zc_log(this.platformData)
       },
 
 
       //原创文章占比
       loadOriginalData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
+        this.zc_log('======原创文章占比');
+        this.zc_log(params);
+        this.zc_log('======原创文章占比');
+
         this.$http.get(this.baseUrl + '/spread/platform/originalnum/accounted', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          console.log('原创文章数据')
-          console.log(response);
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('原创文章数据');
+          this.zc_log(response);
           this.originalData = [];
           if (response.code == 200 && response.data) {
             this.handleData_original(response.data)
           }
         }, function (err) {
-          //console.log('原创文章数据失败');
-          //console.log(err);
+          this.zc_log('原创文章数据失败');
+          this.zc_log(err);
         })
       },
       handleData_original(data) {
-        // //console.log('原创文章数据');
-        // //console.log(data);
-        var originalData = [];
+        // //this.zc_log('原创文章数据');
+        // //this.zc_log(data);
+        let originalData = [];
         if (data.originalCount != 0 || data.unoriginalCount != 0) {
-          originalData.push({name: '原创', value: data.originalCount});
-          originalData.push({name: '非原创', value: data.unoriginalCount});
+          originalData.push({name: '原创', value: data.originalCount ? data.originalCount : 0});
+          originalData.push({name: '非原创', value: data.unoriginalCount ? data.unoriginalCount : 0});
         }
         this.originalData = originalData;
       },
@@ -572,65 +536,129 @@
 
       //周环比数据
       loadCircleData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          }
-          else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
-        //console.log('=======周环比数据')
-        //console.log(params)
-        //console.log('=======周环比数据')
+        this.zc_log('=======周环比数据');
+        this.zc_log(params);
+        this.zc_log('=======周环比数据');
 
         this.$http.get(this.baseUrl + '/spread/platform/weeked/circle', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          console.log('周环比数据')
-          console.log(response)
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('周环比数据');
+          this.zc_log(response);
           this.weekedCircle = [];
           if (response.code == 200 && response.data) {
-            this.weekedCircle = response.data
+            // this.weekedCircle = response.data
+            this.handleCircleData(response.data)
           }
         }, function (err) {
-          //console.log('周环比数据失败');
-          //console.log(err);
+          this.zc_log('周环比数据失败');
+          this.zc_log(err);
         })
+      },
+
+      handleCircleData(data){
+        let chainTitle = null;
+        let lastWeek = null;
+        let nowWeek = null;
+        switch (this.datePickerParams.accountType) {
+          case "0":
+            chainTitle = "日环比";
+            lastWeek = "昨天";
+            nowWeek = "今天";
+            break;
+          case "1":
+            chainTitle = "年环比";
+            lastWeek = "去年";
+            nowWeek = "今年";
+            break;
+          case "2":
+            chainTitle = "月环比";
+            lastWeek = "上月";
+            nowWeek = "本月";
+            break;
+          case "3":
+            chainTitle = "周环比";
+            lastWeek = "上周";
+            nowWeek = "本周";
+            break;
+        }
+
+
+        this.weekedCircle = data;
+        this.weekedCircleColumn = [
+          {prop: 'title', label: ''},
+          {prop: 'sequential', label: chainTitle},
+          {prop: 'sequentialtext', label: '差值'},
+          {prop: 'prevWeek', label: lastWeek},
+          {prop: 'week', label: nowWeek},
+        ];
+
+        this.weekedCircleOptions = {
+          id: 'weekedCircle',
+          total: 0,
+          showBorder: false,
+          //表格列样式
+          columnStyle: {
+            indexs: [0,1,2,3,4],
+            styles: [{textAlign: 'center'},{textAlign: 'center'},{textAlign: 'center'},{textAlign: 'center'},{textAlign: 'center'}],
+            commons: {textAlign: 'center', color: '#444',align:'center'}
+          },
+          //表格表头样式
+          headerStyle: {
+            indexs: [],
+            styles: [],
+            commons: {backgroundColor: '#f4f4f4', textAlign: 'center', padding: '5px 0'}
+          },
+        };
       },
 
 
       //传播时间趋势
       loadTimeTrendData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
+        this.zc_log('======传播时间趋势');
+        this.zc_log(params);
+        this.zc_log('======传播时间趋势');
+
         this.$http.get(this.baseUrl + '/spreadTrend/timeTrend', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('传播时间趋势数据')
-          //console.log(response);
-          this.timeTrendDatas = {categoryArr: [], valueArr: []}
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('传播时间趋势数据');
+          this.zc_log(response);
+          this.timeTrendDatas = {categoryArr: [], valueArr: []};
           if (response.code == 200 && response.data) {
             this.handleData_TimeTrend(response.data)
           }
 
         }, function (err) {
 
-          //console.log('传播时间趋势失败');
-          //console.log(err);
+          this.zc_log('传播时间趋势失败');
+          this.zc_log(err);
         })
       },
       handleData_TimeTrend(data) {
-        // //console.log('传播时间趋势数据');
-        // //console.log(data);
+        // //this.zc_log('传播时间趋势数据');
+        // //this.zc_log(data);
 
-        var categoryArr = [];
-        var valueArr = [
+        let categoryArr = [];
+        let valueArr = [
           // {name: '综合数值', value: []},
           {name: '转载数', value: []},
           {name: '评论数', value: []},
@@ -657,7 +685,7 @@
               value.value.push(dataValue.read_num)
             }
           })
-        })
+        });
 
         this.timeTrendDatas = {categoryArr: categoryArr, valueArr: valueArr}
         this.layoutSubviews();
@@ -666,58 +694,64 @@
 
       //传播地域分析
       loadAreaData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
+        this.zc_log('======传播地域分析');
+        this.zc_log(params);
+        this.zc_log('======传播地域分析');
+
         this.$http.get(this.baseUrl + '/spread/area/current', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('传播地域分析数据')
-          //console.log(response)
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('传播地域分析数据');
+          this.zc_log(response);
           this.areaOriginalData = [];
           this.areaData = [];
-          this.areaRankData = {categoryArr: [], valueArr: []}
+          this.areaRankData = {categoryArr: [], valueArr: []};
           if (response.code == 200 && response.data) {
-            this.handleData_area(response.data)
+            this.handleData_area(response.data);
             this.handleData_areaRank(response.data)
           }
         }, function (err) {
-          //console.log('传播地域分析数据失败');
-          //console.log(err);
+          this.zc_log('传播地域分析数据失败');
+          this.zc_log(err);
         })
       },
       handleData_area(data) {
-        // //console.log('传播地域分析数据')
-        // //console.log(data)
-        var areaData = [];
-        var thiz = this;
+        // //this.zc_log('传播地域分析数据')
+        // //this.zc_log(data)
+        let areaData = [];
+        let thiz = this;
         data.forEach(function (value, index) {
           if (value.province) {
             // areaData.push({name: thiz.cutProvinceName(value.province), value: value.transNum})
-            areaData.push({name: value.province, value: value.transNum})
+            areaData.push({name: value.province, value: value.transNum});
             thiz.areaOriginalData.push(value)
           }
         });
         this.areaData = areaData;
 
-        this.loadProvienceTransnumData(this.plantformId, '江苏省')
+        this.loadTenantData();//动态加载当前地区的转载数量
 
 
       },
       handleData_areaRank(data) {
-        // //console.log('传播地域分析排行数据')
-        // //console.log(data)
+        // //this.zc_log('传播地域分析排行数据')
+        // //this.zc_log(data)
 
-        var categoryArr = [];
-        var valueArr = [
+        let categoryArr = [];
+        let valueArr = [
           {name: '文章转载篇数', value: []},
         ];
 
-        var thiz = this;
+        let thiz = this;
         data.forEach(function (value) {
           if (value.province) {
             categoryArr.push(thiz.cutProvinceName(value.province));
@@ -733,17 +767,25 @@
         });
 
         if (categoryArr.length > 10) {
-          this.areaRankData = {categoryArr: categoryArr.slice(0, 10), valueArr: valueArr.slice(0, 10)}
+
+          valueArr.forEach(function (item) {
+            item.value = item.value.slice(0,10);
+          });
+
+          categoryArr = categoryArr.slice(0,10);
+
+          this.areaRankData = {categoryArr: categoryArr, valueArr: valueArr};
+
         } else {
-          this.areaRankData = {categoryArr: categoryArr, valueArr: valueArr}
+          this.areaRankData = {categoryArr: categoryArr, valueArr: valueArr};
         }
 
-        // //console.log(this.areaRankData)
+        // //this.zc_log(this.areaRankData)
       },
       areaMapClick({name, index}) {
         // alert(`name=${name},index=${index}`);
         // this.provienceTransName = name;
-        var thiz = this;
+        let thiz = this;
         this.areaOriginalData.forEach(function (value, index) {
           if (value.province.indexOf(name) != -1) {
             thiz.loadProvienceTransnumData(thiz.plantformId, value.province)
@@ -751,161 +793,197 @@
         })
 
       },
+      //租户信息
+      loadTenantData() {
+        this.$http.get(this.baseUrl + '/tenant/find').then(function (res) {
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('加载租户信息数据');
+          this.zc_log(response);
+          this.sidebarData_top = null;
+          if (response.code == 200) {
+            this.loadProvienceTransnumData(this.plantformId, response.data.region);
+          }
+        }, function (res) {
+          this.zc_log('加载租户信息error');
+          this.zc_log(res);
+        });
+      },
 
 
       //某地区转载数量
       loadProvienceTransnumData(ID, province) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
         params.province = province;
+        this.zc_log('======某地区转载数量');
+        this.zc_log(params);
+        this.zc_log('======某地区转载数量');
+
         this.provienceTransName = this.cutProvinceName(province);
-        // console.log(`=======某地区转载数量参数`);
-        // console.log(params)
-        // console.log(`=======某地区转载数量参数`);
-        var thiz = this;
+        // this.zc_log(`=======某地区转载数量参数`);
+        // this.zc_log(params)
+        // this.zc_log(`=======某地区转载数量参数`);
+        let thiz = this;
         this.$http.get(this.baseUrl + '/spread/provience/transnum', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          // console.log('某地区转载数量数据')
-          // console.log(response)
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('某地区转载数量数据');
+          this.zc_log(response);
           if (response.code == 200 && response.data) {
             this.handleData_provienceTransnum(response.data);
           }
         }, function (err) {
 
-          //console.log('某地区转载数量数据失败');
-          //console.log(err);
+          this.zc_log('某地区转载数量数据失败');
+          this.zc_log(err);
         })
       },
       handleData_provienceTransnum(data) {
-        // //console.log('某地区转载数量数据')
-        // //console.log(data)
+        // //this.zc_log('某地区转载数量数据')
+        // //this.zc_log(data)
 
-        this.provienceTransnumData = data
+        this.provienceTransnumData = data;
       },
 
 
       //转载媒体占比
       loadTransMediaTypeData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
+        this.zc_log('======转载媒体占比');
+        this.zc_log(params);
+        this.zc_log('======转载媒体占比');
+
         this.$http.get(this.baseUrl + '/platform/trans/mediatype/find', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('转载媒体占比数据')
-          //console.log(response);
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('转载媒体占比数据');
+          this.zc_log(response);
           this.transMediaTypeData = [];
           if (response.code == 200 && response.data) {
             this.handleData_transMediaType(response.data)
           }
         }, function (err) {
 
-          //console.log('转载媒体占比数据失败');
-          //console.log(err);
+          this.zc_log('转载媒体占比数据失败');
+          this.zc_log(err);
         })
       },
       handleData_transMediaType(data) {
 
-        // //console.log('转载媒体占比数据');
-        // //console.log(data)
-        var transMediaTypeData = [];
+        // //this.zc_log('转载媒体占比数据');
+        // //this.zc_log(data)
+        let transMediaTypeData = [];
         data.forEach(function (value, index) {
           if (parseInt(value.value)) {
-            transMediaTypeData.push({name: value.name, value: parseInt(value.value)})
+            transMediaTypeData.push({name: value.name, value: parseInt(value.value), code: value.code})
           }
-        })
+        });
         this.transMediaTypeData = transMediaTypeData;
-        // //console.log(this.transMediaTypeData)
+        // //this.zc_log(this.transMediaTypeData)
       },
 
 
       //转载渠道占比
       loadTransChannelTypeData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
+        this.zc_log('======转载渠道占比');
+        this.zc_log(params);
+        this.zc_log('======转载渠道占比');
+
         this.$http.get(this.baseUrl + '/platform/trans/channel/find', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('转载渠道占比数据')
-          //console.log(response);
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('转载渠道占比数据');
+          this.zc_log(response);
           this.transChannelTypeData = [];
           if (response.code == 200 && response.data) {
             this.handleData_transChannelType(response.data)
           }
         }, function (err) {
 
-          //console.log('转载渠道占比数据失败');
-          //console.log(err);
+          this.zc_log('转载渠道占比数据失败');
+          this.zc_log(err);
         })
       },
       handleData_transChannelType(data) {
 
-        // //console.log('转载渠道占比数据');
-        // //console.log(data)
-        var transChannelTypeData = [];
+        // //this.zc_log('转载渠道占比数据');
+        // //this.zc_log(data)
+        let transChannelTypeData = [];
         data.forEach(function (value, index) {
           if (parseInt(value.value)) {
-            transChannelTypeData.push({name: value.name, value: parseInt(value.value)})
+            transChannelTypeData.push({name: value.name, value: parseInt(value.value), code: value.code})
           }
-        })
+        });
         this.transChannelTypeData = transChannelTypeData;
-        // //console.log(this.transChannelTypeData)
+        // //this.zc_log(this.transChannelTypeData)
       },
 
 
       //平台转载排行
       loadPlatformTransData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
-        //console.log(`=======平台转载排行`);
-        //console.log(params)
-        //console.log(`=======平台转载排行`);
+        this.zc_log(`=======平台转载排行`);
+        this.zc_log(params);
+        this.zc_log(`=======平台转载排行`);
         this.$http.get(this.baseUrl + '/spread/platform/trans', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('平台转载排行数据')
-          //console.log(response);
-          this.platformTransData = {categoryArr: [], valueArr: []}
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('平台转载排行数据');
+          this.zc_log(response);
+          this.platformTransData = {categoryArr: [], platformIdArr: [], valueArr: []};
           if (response.code == 200 && response.data) {
             this.handleData_platformTrans(response.data)
           }
         }, function (err) {
-          //console.log('平台转载排行失败');
-          //console.log(err);
+          this.zc_log('平台转载排行失败');
+          this.zc_log(err);
         })
       },
       handleData_platformTrans(data) {
-        //console.log('平台转载排行数据')
-        // //console.log(data)
+        //this.zc_log('平台转载排行数据')
+        // //this.zc_log(data)
 
-        var categoryArr = [];
-        var valueArr = [
+        let categoryArr = [];
+        let valueArr = [
           {name: '文章转载篇数', value: []},
         ];
-
+        let platformIdArr = [];
         data.forEach(function (value) {
           if (value.transNum) {
             categoryArr.push(value.platformName);
+            platformIdArr.push(value.platformId);
           }
         });
         valueArr.forEach(function (value, index) {
@@ -914,45 +992,51 @@
               value.value.push(dataValue.transNum)
             }
           })
-        })
-        this.platformTransData = {categoryArr: categoryArr, valueArr: valueArr}
-        // //console.log(this.platformTransData)
+        });
+
+        this.platformTransData = {categoryArr: categoryArr, platformIdArr: platformIdArr, valueArr: valueArr}
+        // //this.zc_log(this.platformTransData)
       },
 
 
       //媒体转载排行
       loadMediaTransData(ID) {
-        var params = {startTime: this.startTime, accountType: this.accountType};
-        if (this.plantformId.length > 1) {
-          if (this.isGroupPlantform) {
+        let params = {startTime: this.datePickerParams.startTime, accountType: this.datePickerParams.accountType};
+        if (this.plantformId && this.plantformId.length > 1) {
+          if (this.sidebarType === 1001) {
             params.platformTypeId = ID;
-          } else {
+          } else if (this.sidebarType === 1002) {
             params.platformId = ID;
+          } else if (this.sidebarType === 1003) {
+            params.groupId = ID;
           }
         }
-        this.$http.get(this.baseUrl + '/spreadTrend/mediaOrder', {params: params}).then(function (res) {
-          var response = JSON.parse(res.bodyText)
-          //console.log('媒体转载排行数据')
-          //console.log(response);
-          this.mediaTransData = {categoryArr: [], valueArr: []}
+        this.zc_log('======媒体转载排行');
+        this.zc_log(params);
+        this.zc_log('======媒体转载排行');
 
-          if (response.code == 200 && response.data.mediaList) {
+        this.$http.get(this.baseUrl + '/spreadTrend/mediaOrder', {params: params}).then(function (res) {
+          let response = JSON.parse(res.bodyText);
+          this.zc_log('媒体转载排行数据');
+          this.zc_log(response);
+          this.mediaTransData = {categoryArr: [], valueArr: []};
+
+          if (response.code == 200 && response.data) {
             this.handleData_mediaTrans(response.data.mediaList)
           }
         }, function (err) {
 
-          //console.log('媒体转载排行失败');
-          //console.log(err);
+          this.zc_log('媒体转载排行失败');
+          this.zc_log(err);
         })
       },
       handleData_mediaTrans(data) {
-        // //console.log('媒体转载排行数据')
-        // //console.log(data)
-        var categoryArr = [];
-        var valueArr = [
+        // //this.zc_log('媒体转载排行数据')
+        // //this.zc_log(data)
+        let categoryArr = [];
+        let valueArr = [
           {name: '文章转载篇数', value: []},
         ];
-
         data.forEach(function (value) {
           categoryArr.push(value.media_name);
         });
@@ -960,98 +1044,120 @@
           data.forEach(function (dataValue) {
             value.value.push(dataValue.trans_num)
           })
-        })
+        });
         this.mediaTransData = {categoryArr: categoryArr, valueArr: valueArr}
       },
 
 
       layoutSubviews() {
-        var parentWidth = this.$parent.showSiderbar ? screen.width * 0.85 - 117 : screen.width - 117
-        var length = this.spreadData.length;
-        var width = 0;
-        var padding = screen.width < 1920 ? 25 : 45;
-        width = (parentWidth - (padding * length * 2)) / length
+        let parentWidth = this.$parent.showSiderbar ? screen.width * 0.85 - 117 : screen.width - 117;
+        let length = this.spreadData.length;
+        let width = 0;
+        let padding = screen.width < 1920 ? 25 : 45;
+        width = (parentWidth - (padding * length * 2)) / length;
         if (width > 180) {
-          width = 180
+          width = 180;
           padding = (parentWidth - (180 * length)) / (length * 2)
         }
         if (width < 110) {
-          width = 110
+          width = 110;
           padding = (parentWidth - (110 * length)) / (length * 2)
         }
         if (navigator.userAgent.indexOf('Firefox') >= 0) {
-          this.statisticBoxWidth = (Math.floor(width) - 3) + "px"
-          this.statisticBoxPadding = (Math.floor(padding)) + "px"
+          this.statisticBoxWidth = (Math.floor(width) - 3) + "px";
+          this.statisticBoxPadding = (Math.floor(padding)) + "px";
         } else {
-          this.statisticBoxWidth = Math.floor(width) + "px"
-          this.statisticBoxPadding = Math.floor(padding) + "px"
+          this.statisticBoxWidth = Math.floor(width) + "px";
+          this.statisticBoxPadding = Math.floor(padding) + "px";
         }
         this.homeWorkNumFontSize = screen.width < 1920 ? "40px" : "60px";
         this.homeWorkNumBackgroundSize = screen.width < 1920 ? "40px" : "60px";
       }
     },
+    beforeCreate(){
+      let token = this.$route.query.token;
+      if(token){
+        localStorage.setItem('token',token);
+      }
+    },
+    created(){
+      let data = {
+        id: "overView",
+        name:document.title
+      };
+      this.registerCreateReportParams(this.$route.path, data);
+
+      let token = this.$route.query.token;
+      if(token){
+        localStorage.setItem('token',token);
+      }
+    }
   }
 </script>
 
 <style scoped>
 
-  /*传播情况统计*/
-  .statistic {
-    background-color: #fff;
-    margin-top: 10px;
-    padding: 20px 0;
-  }
-
-  .statistic .statistic_box {
+  /******************传播情况统计****************/
+  .spread{
     float: left;
+    width: 50%;
   }
-
-  .statistic .statistic_boxItem {
+  .spread_single{
+    float: left;
     width: 100%;
-    border: 4px solid #4642ff;
-    padding-bottom: 100%;
-    margin: 0 auto;
-    border-radius: 50%;
-    position: relative;
+  }
+  .spread_item{
+    float: left;
+    height: 80px;
+    line-height: 40px;
+    margin: 0 18px 30px 0;
+    padding: 0 10px 0 0;
+    text-align: right;
+    background-color: #F0F6FF;
+    border-radius: 8px;
+    font-size: 16px
+  }
+  .spread_item:last-child{
+    margin: 0;
   }
 
-  .statistic .statistic_boxItem .boxItemContent {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc((100% - 60px) / 2);
-    text-align: center;
+  .spread_item .spread_item_icon{
+    float: left;
+    background-image: url("/static/images/spreadIcon.png");
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    width: 40px;
+    height: 60px;
+    margin-top: 10px;
   }
 
-  /*各个平台作品数*/
-  .home_works {
+  .spread_item_single{
+    width: calc((100% - 7*18px - 8*10px) / 8);
+    margin: 0 18px 0 0;
+  }
+
+  .spread_item_group{
+    width: calc((100% - 4*18px - 4*10px) / 4);
+    margin: 0 18px 30px 0;
+  }
+  .spread_item_group_four{
+    width: calc((100% - 2*18px - 2*10px) / 2);
+    margin: 0 18px 30px 0;
+
+  }
+  /******************作品发布占比****************/
+  .works{
     float: left;
     width: 50%;
   }
 
-  .home_works_count, .home_works_ratio {
-    height: 300px;
-    line-height: 300px;
-
-  }
-
-  .home_works_count .home_works_count_content {
-    float: left;
-    text-align: center;
-  }
-
-  .home_works_count_content .home_works_count_content_num {
-    background: url("../../assets/image/artBg.png") no-repeat center;
-    margin: 0 auto;
-  }
-
-  /*原创文章*/
+  /*****************原创作品占比****************/
   .original_article_l, .original_article_r {
     float: left;
     width: 50%;
   }
 
-  /*传播地域分析*/
+  /*****************传播地域分析****************/
   .region .region_map {
     float: left;
     width: 56%;
@@ -1070,13 +1176,12 @@
 
   .region_chart_title_l div, .region_chart_title_r div {
     color: #444;
-    font-size: 18px;
+    /* font-size: 18px; */
     font-weight: 900;
   }
 
   .region_chart_title_l span, .region_chart_title_r span {
-    color: #4642ff;
-    font-size: 18px;
+    /* font-size: 18px; */
     font-weight: 900;
   }
 
@@ -1091,6 +1196,7 @@
     width: calc(50% - 2px);
     /*border: #E2E3E4 1px solid;*/
     /*border-top: 0;*/
+    padding-bottom: 20px;
 
   }
 
@@ -1106,6 +1212,13 @@
     /*padding-left: 7%;*/
   }
 
+  .el-table .has-gutter {
+    background-color: green;
+  }
+
+  .el-table .headerStyle th {
+    background-color: rgb(244, 244, 244);
+  }
 </style>
 
 

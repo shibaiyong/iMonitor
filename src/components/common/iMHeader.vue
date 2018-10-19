@@ -2,9 +2,10 @@
 
   <div id="iM_header">
 
-    <div class="iM_header_search" v-if="!breadcrumbData.length">
+    <div class="iM_header_search"
+         v-if="!breadcrumbData.length"
+         @keyup.enter="searchEnter()">
       <el-autocomplete placeholder="请输入文章标题"
-                       :disabled="true"
                        v-model="searchResult"
                        suffix-icon="el-icon-search"
                        :trigger-on-focus="false"
@@ -27,6 +28,7 @@
       </el-select>
 
       <el-date-picker :type="selectedPickerType.value"
+                      id="el-date-picker"
                       align="right"
                       v-model="selectedDatePicker"
                       :format="selectedPickerType.format"
@@ -39,7 +41,9 @@
       </el-date-picker>
     </div>
 
-    <div class="iM_refresh_time" v-if="!breadcrumbData.length">数据更新时间:2018-05-01 4:04</div>
+    <div class="iM_refresh_time" v-if="!breadcrumbData.length" @click="chooseTimeClick()">
+      <span>{{currentDataRank}}</span>
+    </div>
 
 
     <div class="breadcrumb" v-if="breadcrumbData.length">
@@ -48,9 +52,7 @@
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-
-    <div class="report"><span>生成报告</span></div>
-
+    <div class="report" @click="getPdfByDom" id="getPdfByDom"><span id="report-span">{{canGetPdf?'生成报告':'报告生成中'}}</span></div>
   </div>
 
 </template>
@@ -75,27 +77,22 @@
       return {
         searchResult: '',
         selectedDatePicker: '',
-        selectedDatePicker1: '',
+        canGetPdf: true,
+        canGetPdf1:false,
+        currentDataRank: '',//当前时间选择器的data格式时间
         //时间选择器参数
-        selectedPickerType: {name: '周', value: 'week', type: 3,format:'yyyy年第WW周'},
+        selectedPickerType: {name: '周', value: 'week', type: 3, format: 'yyyy年第WW周'},
         pickerTypes: [
-          {name: '天', value: 'date', type: 0,format:'yyyy/MM/dd'},
-          {name: '周', value: 'week', type: 3,format:'yyyy年第WW周'},
-          {name: '月', value: 'month', type: 2,format:'yyyy年MM月'},
-          {name: '年', value: 'year', type: 1,format:'yyyy年'},
+          {name: '天', value: 'date', type: 0, format: 'yyyy/MM/dd'},
+          {name: '周', value: 'week', type: 3, format: 'yyyy年第WW周'},
+          {name: '月', value: 'month', type: 2, format: 'yyyy年MM月'},
+          {name: '年', value: 'year', type: 1, format: 'yyyy年'},
         ]
       }
     },
     methods: {
 
       // ******************************************搜索框方法****************************************//
-      //搜索功能
-      articleSearch(queryString, callback) {
-        var recommends = this.loadAll();
-        var results = recommends.filter(this.createFilter(queryString));
-        // 调用 callback 返回建议列表的数据
-        callback(results);
-      },
       createFilter(queryString) {
         return (restaurant) => {
           return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
@@ -103,128 +100,205 @@
       },
       //搜索结果推荐点击事件
       articleSearchSelect(item) {
-        if (item.id != undefined) {
-          this.$router.push({path: '/detail/' + item.id});
+        if (item.articleId !== undefined) {
+          window.open( '/detail?uid='+ item.unionId)
         }
       },
 
-      //用于测试搜索推荐数据
-      loadAll() {
-        return [
-          {"value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号", "id": "12"},
-          {"value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号", "id": "13"},
-          {"value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113", "id": "14"},
-          {"value": "泷千家(天山西路店)", "address": "天山西路438号"},
-          {"value": "胖仙女纸杯蛋糕（上海凌空店）", "address": "上海市长宁区金钟路968号1幢18号楼一层商铺18-101"},
-          {"value": "贡茶", "address": "上海市长宁区金钟路633号"},
-          {"value": "豪大大香鸡排超级奶爸", "address": "上海市嘉定区曹安公路曹安路1685号"},
-          {"value": "茶芝兰（奶茶，手抓饼）", "address": "上海市普陀区同普路1435号"},
-          {"value": "十二泷町", "address": "上海市北翟路1444弄81号B幢-107"},
-          {"value": "星移浓缩咖啡", "address": "上海市嘉定区新郁路817号"},
-          {"value": "阿姨奶茶/豪大大", "address": "嘉定区曹安路1611号"},
-          {"value": "新麦甜四季甜品炸鸡", "address": "嘉定区曹安公路2383弄55号"},
-          {"value": "Monica摩托主题咖啡店", "address": "嘉定区江桥镇曹安公路2409号1F，2383弄62号1F"},
-          {"value": "浮生若茶（凌空soho店）", "address": "上海长宁区金钟路968号9号楼地下一层", 'id': '100'},
-          {"value": "NONO JUICE  鲜榨果汁", "address": "上海市长宁区天山西路119号"},
-          {"value": "CoCo都可(北新泾店）", "address": "上海市长宁区仙霞西路"},
-          {"value": "快乐柠檬（神州智慧店）", "address": "上海市长宁区天山西路567号1层R117号店铺"},
-          {"value": "Merci Paul cafe", "address": "上海市普陀区光复西路丹巴路28弄6号楼819"},
-          {"value": "猫山王（西郊百联店）", "address": "上海市长宁区仙霞西路88号第一层G05-F01-1-306"},
-          {"value": "枪会山", "address": "上海市普陀区棕榈路"},
-          {"value": "纵食", "address": "元丰天山花园(东门) 双流路267号"},
-          {"value": "钱记", "address": "上海市长宁区天山西路"},
-          {"value": "壹杯加", "address": "上海市长宁区通协路"},
-          {"value": "唦哇嘀咖", "address": "上海市长宁区新泾镇金钟路999号2幢（B幢）第01层第1-02A单元"},
-          {"value": "爱茜茜里(西郊百联)", "address": "长宁区仙霞西路88号1305室"},
-          {"value": "爱茜茜里(近铁广场)", "address": "上海市普陀区真北路818号近铁城市广场北区地下二楼N-B2-O2-C商铺"},
-          {"value": "鲜果榨汁（金沙江路和美广店）", "address": "普陀区金沙江路2239号金沙和美广场B1-10-6"},
-          {"value": "开心丽果（缤谷店）", "address": "上海市长宁区威宁路天山路341号"},
-          {"value": "超级鸡车（丰庄路店）", "address": "上海市嘉定区丰庄路240号"},
-          {"value": "妙生活果园（北新泾店）", "address": "长宁区新渔路144号"},
-          {"value": "香宜度麻辣香锅", "address": "长宁区淞虹路148号"},
-          {"value": "凡仔汉堡（老真北路店）", "address": "上海市普陀区老真北路160号"},
-          {"value": "港式小铺", "address": "上海市长宁区金钟路968号15楼15-105室"},
-          {"value": "蜀香源麻辣香锅（剑河路店）", "address": "剑河路443-1"},
-          {"value": "北京饺子馆", "address": "长宁区北新泾街道天山西路490-1号"},
-          {"value": "饭典*新简餐（凌空SOHO店）", "address": "上海市长宁区金钟路968号9号楼地下一层9-83室"},
-          {"value": "焦耳·川式快餐（金钟路店）", "address": "上海市金钟路633号地下一层甲部"},
-          {"value": "动力鸡车", "address": "长宁区仙霞西路299弄3号101B"},
-          {"value": "浏阳蒸菜", "address": "天山西路430号"},
-          {"value": "四海游龙（天山西路店）", "address": "上海市长宁区天山西路"},
-          {"value": "樱花食堂（凌空店）", "address": "上海市长宁区金钟路968号15楼15-105室"},
-          {"value": "壹分米客家传统调制米粉(天山店)", "address": "天山西路428号"},
-          {"value": "福荣祥烧腊（平溪路店）", "address": "上海市长宁区协和路福泉路255弄57-73号"},
-          {"value": "速记黄焖鸡米饭", "address": "上海市长宁区北新泾街道金钟路180号1层01号摊位"},
-          {"value": "红辣椒麻辣烫", "address": "上海市长宁区天山西路492号"},
-          {"value": "(小杨生煎)西郊百联餐厅", "address": "长宁区仙霞西路88号百联2楼"},
-          {"value": "阳阳麻辣烫", "address": "天山西路389号"},
-          {"value": "南拳妈妈龙虾盖浇饭", "address": "普陀区金沙江路1699号鑫乐惠美食广场A13"}
-        ];
-      },
       // ****************************************时间选择器方法******************************************//
 
       //日期类型选择器更改
       selectedPickerChanged(item) {
-        var thiz = this;
+        let thiz = this;
         this.selectedPickerType.value = item;
         this.pickerTypes.forEach(function (value) {
-          if (value.value == item) {
+          if (value.value === item) {
             thiz.selectedPickerType.name = value.name;
             thiz.selectedPickerType.format = value.format;
             thiz.selectedPickerType.type = value.type;
           }
         });
 
-        //console.log('类型选择器值=====');
-        //console.log(item);
+        window.localStorage.setItem('selectedPickerClickRecord', item);
+        let dateRecord = window.localStorage.getItem('datePickerClickRecord');
+        this.handleDateData(dateRecord);
       },
 
       //日期选择器更改
       datePickerChanged(item) {
-        //console.log('日期选择器更改了')
         this.handleDateData(item);
       },
 
-      refreshPickerData(type, time) {
+      refreshPickerData(time) {
+
+        let name = this.selectedPickerType.name;
+        let date = new Date(time);
+        this.currentDataRank = date.Format('yyyy年MM月dd日');
+        let timeResult;
+        if (name === '天') {
+          timeResult = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+          //生成显示范围文字
+          this.currentDataRank += '当天';
+        } else if (name === '周') {
+          timeResult = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+          //生成显示范围文字
+          date.setDate(date.getDate() + 6);
+          this.currentDataRank = this.currentDataRank + '-' + date.Format('yyyy年MM月dd日');
+
+        } else if (name === '月') {
+          timeResult = (date.getMonth() + 1) + '/1/' + date.getFullYear();
+          //生成显示范围文字
+          date.setDate(1);
+          this.currentDataRank = date.Format('yyyy年MM月dd日') + '-';
+          date.setMonth(date.getMonth() + 1);
+          date.setDate(date.getDate() - 1);
+          this.currentDataRank += date.Format('yyyy年MM月dd日');
+        } else {
+          timeResult = '1/1/' + date.getFullYear();
+          //生成显示范围文字
+          date.setMonth(0);
+          date.setDate(1);
+          this.currentDataRank = date.Format('yyyy年MM月dd日') + '-';
+          date.setFullYear(date.getFullYear() + 1);
+          date.setDate(date.getDate() - 1);
+          this.currentDataRank += date.Format('yyyy年MM月dd日');
+        }
+        this.timeResult = timeResult
         this.$emit('click-datepicker', {
-          type: type,
-          time: time
+          type: this.selectedPickerType.type,
+          time: timeResult
         });
       },
+      articleSearch(queryString, callback) {
+        queryString = this.trimAll(queryString);
+        if(queryString.length==0){
+          return
+        }
+        let params = {
+          titleWord: queryString
+        }
+        let thiz = this
+        this.$http.get(thiz.baseUrl + "/search/titleList", {params: params}).then(function (res) {
+          thiz.fullscreenLoading = false
+          let data = typeof res.body === "object" ? res.body : JSON.parse(res.body);
+          let result = []
+          if (data.code == 200 && data.data.length > 0) {
+            for (let i = 0; i < data.data.length; i++) {
+              result.push({
+                value: data.data[i].title + (data.data[i].platformName ? ('-' + data.data[i].platformName) : ''),
+                articleId: data.data[i].articleId,
+                url: data.data[i].url,
+                unionId:data.data[i].unionId,
+              })
+            }
+            callback(result)
+          } else {
+            let result = [{
+              value: "无相关结果",
+              id: ""
+            }];
+            callback(result)
+          }
+        }, function (err) {
+          thiz.fullscreenLoading = false
+          callback([]);
+          this.handleError("请求错误，请稍后尝试")
+        })
+      },
+      handleError(message) {
+        this.$message({
+          duration: 1500,
+          message: message
+        });
+      },
+      handleDateData(dateM) {
+        let date = dateM ? new Date(dateM) : new Date();
+        this.selectedDatePicker = date;
+        window.localStorage.setItem('datePickerClickRecord', date);
 
-      //用于更新时间选择器上的日期字符串
-      refreshSelectedDate(type,time){
-
-        //console.log('更新时间选择器上的日期字符串++type')
-        //console.log(type)
-        //console.log('更新时间选择器上的日期字符串++time')
-        //console.log(time)
-
-        if(type.value == 'week'){
-          this.selectedDatePicker = time
+        //初始化时候选择上周数据
+        if (this.selectedPickerType.name === '周') {
+          let day = date.getDay();
+          let result = date.setDate(date.getDate() - day + 1);
+          this.refreshPickerData(result);
+        } else {
+          this.refreshPickerData(date);
         }
 
       },
+      getPdfByDom() {
+        if(!this.canGetPdf){
+          return
+        }
+        if(this.canGetPdf1){
+          return
+        }
+        let thiz = this
+        this.canGetPdf = false
+        document.getElementById("getPdfByDom").style.cursor="not-allowed"
+        setTimeout(function () {
+          thiz.canGetPdf = true
+          document.getElementById("getPdfByDom").style.cursor="pointer"
+        }, 5000)
+        let obj = this.createReportParamsMap[this.$route.path]
+        let id = obj.id
+        let name = obj.name
+        let time = this.currentDataRank
+        if(!name||name==""){
+          let sidebar = this.$parent.$children[2]
+          if(sidebar){
+            name = sidebar.selectedName
+            if(name=="苏州广播电视总台"){
+              name=""
+            }
+          }
+        }
+        this.getPdf(id, name, time)
+      },
 
-      handleDateData(dateM){
-        var date = dateM?new Date(dateM):new Date();
 
-        this.refreshSelectedDate(this.selectedPickerType,date);
-        window.localStorage.setItem('datePickerClickRecord',date);
 
-        //初始化时候选择上周数据
-        var day = date.getDay();
-        var result = date.setDate(date.getDate() - day + 1 - (dateM?0:7));
-        var startTime = new Date(result).Format('MM/dd/yyyy');
-        this.refreshPickerData(this.selectedPickerType.type,startTime);
+      /*监听回车点击事件*/
+      searchEnter(){
+        let searchResult = this.trimAll(this.searchResult);
+        if(searchResult.length>0){
+          window.open("searchList?searchTitle=" + this.searchResult)
+        }
+      },
 
+
+
+      /*时间范围点击,时间选择器获取焦点*/
+      chooseTimeClick(){
+        let dataPicker = document.getElementById('el-date-picker');
+        dataPicker.focus();
       }
     },
     mounted() {
-      var dateRecord = window.localStorage.getItem('datePickerClickRecord');
-      if(dateRecord){
-        this.handleDateData(dateRecord)
-      }else{
+      var thiz =this;
+      setTimeout(function () {
+        if(thiz.createReportParamsMap[thiz.$route.path]==null){
+          document.getElementById("report-span").style.background="rgb(244, 244, 244)";
+          document.getElementById("report-span").style.color="#444444";
+          thiz.canGetPdf1 = true
+        }
+      },1000);
+      let searchImg = document.getElementsByClassName("el-input__icon")[0];
+      var thiz = this;
+      if(searchImg){
+        let thiz =this;
+        searchImg.onclick = function () {
+         let searchResult = thiz.trimAll(thiz.searchResult);
+         if(searchResult.length>0){
+           window.open("searchList?searchTitle=" + thiz.searchResult)
+         }
+        }
+      }
+      let selectedRecord = window.localStorage.getItem('selectedPickerClickRecord');
+      if (selectedRecord) {
+        this.selectedPickerChanged(selectedRecord);
+      } else {
+        window.localStorage.setItem('selectedPickerClickRecord', this.selectedPickerType.value);
         this.handleDateData();
       }
     }
@@ -242,7 +316,7 @@
     overflow: hidden;
   }
 
-  .iM_header_search, .iM_header_datapicker, .iM_refresh_time {
+  .iM_header_search, .iM_header_datapicker {
     float: left;
     line-height: 43px;
     margin-left: 20px;
@@ -282,31 +356,41 @@
   }
 
   .iM_header_datapicker .el-select >>> .el-input__suffix {
-    right: 0px;
+    right: 0;
     display: none;
   }
 
   /*刷新时间样式*/
   .iM_refresh_time {
-    color: #E2E3E4;
-    font-size: 15px;
+    position: absolute;
+    height: 43px;
+    line-height: 43px;
+    color: #606266;
+    /* font-size: 15px; */
+    cursor: pointer;
+    background-color: #fff;
+    margin-left: 675px;
   }
-
+  .iM_refresh_time span{
+    border: 1px solid #e2e3e4;
+    border-radius: 5px;
+    padding: 4px 20px;
+  }
   /*生成报告样式*/
   .report {
+    cursor: pointer;
     float: right;
     line-height: 30px;
     padding: 6.5px 0;
   }
 
   .report span {
-    background-color: #4642ff;
+    background-color: #3B87F5;
     display: inline-block;
     width: 80px;
     text-align: center;
     color: #fff;
     border-radius: 5px;
-    cursor: pointer;
   }
 
   /*面包屑*/
@@ -323,6 +407,10 @@
   }
 
   .breadcrumb >>> .el-breadcrumb__inner:hover {
-    color: #4642ff;
+    color: #3B87F5;
+  }
+
+    >>>.el-input__icon {
+    cursor: pointer;
   }
 </style>

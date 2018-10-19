@@ -12,10 +12,10 @@
     </div>
     <div class="monitorList-item" v-for="(item,index) in listData">
       <div class="index">{{index+1}}</div>
-      <div class="name">{{item.name}}</div>
-      <div class="items">{{getItems(item.items)}}</div>
-      <div class="time">{{item.time}}</div>
-      <div class="del">
+      <div class="name">{{item.groupName}}</div>
+      <div class="items" :title="getItemsTitle(item.platformList)">{{getItems(item.platformList)}}</div>
+      <div class="time">{{item.createTime}}</div>
+      <div class="del" @click="deleteItem(item.id ,item.groupName)">
         <span class="delete"> 删除</span>
       </div>
     </div>
@@ -26,14 +26,38 @@
 <script>
   export default {
     name: "monitor-list",
-    props: ['listData'],
+    props: ['listData', 'deleteListener'],
     methods: {
-      getItems: function (list) {
-        console.log(list);
+      deleteItem: function (id, name) {
+        var thiz = this
+        var content = {
+          startContent: "是否要删除",
+          accentContent: name,
+          endContent: "此检测项？",
+        }
+        var buttonText = {
+          confirmButtonText: "删除",
+          cancelButtonText: "取消",
+        }
+        this.confirm(content, buttonText, () => {
+          thiz.deleteListener(id)
+        })
+      },
+      getItemsTitle: function (list) {
         var str = "";
         for (var i = 0; i < list.length; i++) {
-          str = str + list[i] + ",";
+          str = str + list[i].name + "，";
         }
+        str = str.slice(0, str.length - 1)
+        return str;
+      },
+      getItems: function (list) {
+        var str = "";
+        for (var i = 0; i < list.length; i++) {
+          str = str + list[i].name + "，";
+        }
+        str = str.slice(0, str.length - 1)
+        str = str.length > str.slice(0, 19) + "..." ? str : str
         return str;
       }
     }

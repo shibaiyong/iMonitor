@@ -5,7 +5,7 @@
 <script>
   import echarts from 'echarts'
 
-  let emphasisColor = ['#4642ff', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959']
+  let emphasisColor = ['#3B87F5', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959']
 
   export default {
     name: "line-charts",
@@ -92,10 +92,10 @@
             data: this.areaData.valueArr[0].value,
             type: 'line',
             lineStyle: {
-              color: '#4642ff'
+              color: '#3B87F5'
             },
             itemStyle: {
-              color: '#4642ff',
+              color: '#3B87F5',
               border: 'solid'
             },
             areaStyle: {
@@ -124,7 +124,7 @@
             emphasis: {
               itemStyle: {
                 color: param => {
-                  // //console.log(12432536)
+                  // //this.zc_log(12432536)
                   return "#f0ff0fl"
                 }
               }
@@ -146,10 +146,10 @@
         if (this.options.isArea) {
           var a = {
             grid: {
-              left: 40,
-              right: 40,
-              top: 30,
-              bottom: 50
+              left: '7%',
+              right: '7%',
+              top: '50',
+              bottom: '50',
             },
             xAxis: {
               show: true,
@@ -166,12 +166,9 @@
                 show: false,
               },
               axisLabel: {
-                color: '#444',
                 show: true,
-                interval: 0,
-                align: "center",
-                showMinLabel: true,
-                showMaxLabel: true,
+                color: "#a3a3a3",
+                margin: 10
               }
             },
             tooltip: {
@@ -179,7 +176,10 @@
               formatter: (params) => {
                 var days = params[0].name;
                 var week = thiz.getWeek(days)
-                return params[0].name + " " + week + "<br>" + params[0].marker + "作品数：" + params[0].value
+                if (typeof week != 'string') {
+                  week = ""
+                }
+                return params[0].name + " " + week + "<br>" + params[0].marker + "作品数：" + thiz.handleNum(params[0].value)
               },
               backgroundColor: 'rgba(255,255,255,0.5)',
               textStyle: {
@@ -208,7 +208,7 @@
             },
             series: this.setupSeries(),
           };
-          // //console.log(a)
+          // //this.zc_log(a)
           return a
         }
         return {
@@ -261,20 +261,24 @@
             },
             type: 'value'
           },
-          color: ['#4642ff', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959'],
+          color: ['#3B87F5', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959'],
           tooltip: {
             trigger: 'axis',
             confine: true,
-            backgroundColor: 'rgba(255,255,255,0.5)',
+            backgroundColor: 'rgba(255,255,255,0.8)',
             textStyle: {color: '#444'},
             extraCssText: 'box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);padding:10px',
             formatter: (params) => {
-              console.log(params)
+              // this.zc_log(params)
               var days = params[0].name;
-              var week = thiz.getWeek(days)
+              var week = ""
+              week = thiz.getWeek(days)
+              if (typeof week != 'string') {
+                week = ""
+              }
               var formatter = days + " " + week + "<br/>"
               params.forEach(function (value, index, array) {
-                formatter = formatter + value.marker + value.seriesName + ": " + value.value
+                formatter = formatter + value.marker + value.seriesName + ": " + thiz.handleNum(value.value)
                 if (index < array.length - 1) {
                   formatter += "<br/>"
                 }
@@ -349,7 +353,7 @@
         }
       },
       startCirculationShow() {
-        // //console.log(this.levelIndex)
+        // //this.zc_log(this.levelIndex)
         var levelIndex = this.levelArray.length - (this.levelIndex % this.levelArray.length) - 1;
         for (var i = 0; i < this.levelArray.length; i++) {
           var levelDataArray = this.levelArray[i]
@@ -401,7 +405,7 @@
         lineChart.resize();
       });
       this.eChartsObj = lineChart;
-      this.checkDataOrderOfMagnitudes()
+      // this.checkDataOrderOfMagnitudes()
       var thiz = this
       lineChart.on('legendselectchanged', function (params) {
         for (var i = 0; i < thiz.chartData.valueArr.length; i++) {

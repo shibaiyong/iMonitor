@@ -13,10 +13,28 @@
 
 /*****************折叠面板***************/
 .platform_collapse {
+  position: relative;
   border-top: 1px solid #E2E3E4;
   border-bottom: 1px solid #E2E3E4;
-  padding: 0 30px;
+  padding: 0 50px;
   background: white;
+}
+.platform_collapse .search-icon {
+  position: absolute;
+  right: 60px;
+  font-size: 22px;
+  top: 5px;
+}
+.platform_collapse >>> .el-checkbox__inner {
+  border-radius: 10px;
+}
+
+.platform_collapse >>> .el-input__inner {
+  width: 280px;
+  height: 31px;
+  margin-top: 2px;
+  margin-right: 50px;
+  border-radius: 15px;
 }
 
 /*****************折叠面板头部***************/
@@ -30,15 +48,15 @@
   float: right;
   background-color: white;
   cursor: default;
-  color: #4642FF;
-  font-size: 20px;
+  color: #3B87F5;
+  /* font-size: 20px; */
 }
 .platform_collapse_header .arrow_nomal {
   float: right;
   background-color: white;
   cursor: default;
-  color: #4642FF;
-  font-size: 20px;
+  color: #3B87F5;
+  /* font-size: 20px; */
 }
 
 /*激活状态下搜索框*/
@@ -72,15 +90,15 @@
 /**********************已选平台******************************/
 .platform_collapse_header .selected {
   float: left;
-  font-size: 15px;
+  /* font-size: 15px; */
 }
 
 /*激活状态下已选平台按钮样式*/
 .platform_collapse_header .selected .selected_item_active {
-  border: #4642FF 1px solid;
+  border: #3B87F5 1px solid;
   margin-right: 5px;
-  font-size: 10px;
-  color: #4643ff;
+  /* font-size: 10px; */
+  color: #3B87F5;
   display: inline-block;
   height: 20px;
   padding-left: 5px;
@@ -92,8 +110,8 @@
 /*未激活状态下已选平台按钮样式*/
 .platform_collapse_header .selected .selected_item_nomal {
   margin-right: 5px;
-  font-size: 15px;
-  color: #4643ff;
+  /* font-size: 15px; */
+  color: #3B87F5;
   display: inline-block;
   height: 20px;
   padding: 0 5px;
@@ -104,10 +122,10 @@
 
 /*激活状态下删除按钮样式*/
 .platform_collapse_header .selected .selected_item_active i {
-  background: #4642ff;
+  background: #3B87F5;
   color: white;
   line-height: 18px;
-  border: #4642FF 1px solid;
+  border: #3B87F5 1px solid;
   border-radius: 0px 10px 10px 0px;
   padding-right: 5px;
   padding-left: 5px;
@@ -117,9 +135,9 @@
 
 /*清空按钮样式*/
 .platform_collapse_header .selected .selected_clear {
-  border: #4642FF 1px solid;
-  font-size: 8px;
-  color: #4643ff;
+  border: #3B87F5 1px solid;
+  /* font-size: 8px; */
+  color: #3B87F5;
   display: inline-block;
   height: 15px;
   padding: 0 5px;
@@ -170,13 +188,13 @@
 .platform_collapse .platform_collapse_item_active .contrast_count{
   text-align: center;
   padding: 20px 0;
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 .platform_collapse .platform_collapse_item_active .contrast_count span{
-  border: #4642FF 1px solid;
+  border: #3B87F5 1px solid;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #4642FF;
+  background-color: #3B87F5;
   color: white;
   cursor: pointer;
 }

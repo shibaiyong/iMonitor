@@ -1,32 +1,21 @@
-/*块元素通用属性*/
-.block_rzl {
-  background-color: #fff;
-  border-top: 1px #E2E3E4 solid;
-  border-bottom: 1px #E2E3E4 solid;
-  padding: 20px 50px;
-  min-width: 1000px;
-  margin-top: 5px;
+/*统一*/
+.block_IM{
+  padding: 0 50px;
 }
 
-/*标题文字样式*/
-.title_rzl {
-  font-size: 16px;
-  font-weight: bolder;
-  color: #444;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
+
+
 
 /*正文文字样式*/
 .text_rzl {
-  font-size: 14px;
+  /* font-size: 14px; */
   color: #444;
 }
 
 /*正文文字带链接样式*/
 .text_link_rzl {
-  font-size: 14px;
-  color: #4642ff;
+  /* font-size: 14px; */
+  color: #3B87F5;
 }
 
 /*取消用户选中文字*/
@@ -53,7 +42,7 @@
 }
 
 #content{
-  background-color: #fafafb;
+  background-color: #aaaaaa;
   float: left;
   overflow: auto;
   height: calc(100% - 90px);
@@ -66,9 +55,10 @@
   width: 100%;
 }
 #content_page{
-  background-color: #fafafb;
+  background-color: #aaa;
   overflow: auto;
 }
+
 #menu{
   margin-top: 5px;
   overflow: auto;
@@ -84,7 +74,80 @@
   background-color: #fafafb;
   padding-top: 25%;
   height: 100%;
-  font-size: 15px;
+  /* font-size: 15px; */
   color: #8c939d;
   text-align: center;
+}
+.noMoreData{
+  background-color: #fff;
+  padding-top: 25%;
+  height: 50%;
+  /* font-size: 15px; */
+  color: #8c939d;
+  text-align: center;
+
+}
+
+input:-webkit-autofill {
+  webkit-box-shadow: 0 0 0px 1000px white inset;
+  box-shadow: 0 0 0px 1000px white inset !important;
+  outline: none !important;
+}
+
+
+/**********全局css**********/
+
+/*统一背景色 间隙颜色*/
+.bgc_rzl{
+  background-color: #eeeeee;
+}
+
+/*统一文字颜色*/
+.color_base{
+  color: #3B87F5;
+}
+
+/*统一背景颜色*/
+.bgc_base{
+  background-color: #3B87F5;
+}
+
+/*遮罩层css*/
+#loading_rzl{
+  z-index: 100;
+  position: fixed;
+  display: none;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+}
+
+/*全局content布局*/
+.IM_content {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  overflow-y: auto;
+}
+
+/*块元素通用属性*/
+.block_rzl {
+  background-color: #fff;
+  padding: 20px 50px;
+  min-width: 1000px;
+  margin-top: 10px;
+}
+
+/*标题文字样式*/
+.title_rzl {
+  /* font-size: 20px; */
+  line-height: 18px;
+  font-weight: bolder;
+  color: #666;
+  border-left: 5px solid #666;
+  padding-left: 5px;
+  margin-bottom: 30px;
 }

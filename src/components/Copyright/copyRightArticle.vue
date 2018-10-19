@@ -1,28 +1,16 @@
 <template>
   <div class="copyRightArticle">
-    <div class="title">截止时间:无</div>
-    <div class="content">
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
-      <p>
-        android聊天软件的实现如果SOcket的话，首先对手机的电池损耗大，其次服务器要支持大量并发压力很大，阻塞式不是太优雅，可以试试用NIO的方式异步，服务器端用mina这个框架做管理。二选择用http，简单的处理了前面两个问题，而这种实现方式是通过轮询来实现的，或者算是心跳包，不过也会影响一定的效果，不是完全实时。而XMPP比较灵活，基于XML的东东，最主要是他可以实现实时聊天！如果在服务器端管理连接会比较方便，而服务器端是异步响应的，不过这个实现的话要看文档，实现难度比较大，他的服务器端有开源的Openfire，这东西要修改的话也是蛮麻烦的。而国内用的开源项目用得最多的是http轮询，和NIO方式，XMPP相对比较少如果相同数据传输，我模拟一个简单的字符发送抓包，流量是NIO少，XMPP次之，HTTP较多数据不一定准确，你可以自己试试HTTP与NIO的对比你就忽略吧，而XML是一对对的<>符号，所以字符数也多一点
-      </p>
+    <div v-if="articleData">
+      <div class="title">截止时间:{{articleData.transPictureTime?articleData.transPictureTime:'无'}}</div>
+      <div class="content" v-html="html" v-if="!isShowImg">
+      </div>
+      <img :src="articleData.transPictureUrl" v-if="isShowImg&&articleData.transPictureUrl" class="content-img"/>
+      <div v-if="isShowImg&&!articleData.transPictureUrl" class="content-text">
+        图片正在准备，请稍等
+      </div>
+    </div>
+    <div v-if="!articleData" class="content-text">
+      暂无详情
     </div>
   </div>
 </template>
@@ -30,30 +18,38 @@
 <script>
   export default {
     name: "copy-right-tables",
+    props: ["articleData"],
     data() {
       return {
-        tableData: {
-          type: '1',
-          title: '名城苏州网',
-          items: [
-            {title: "标题", type: 'text', content: '严查银行股东代持 '},
-            {title: "发布链接", type: 'url', content: 'http://www.baidu.com'},
-            {title: "发布时间", type: 'text', content: '2017/07/23 15:84'},
-            {title: "发布终端", type: 'text', content: ''},
-            {title: "发布版块", type: 'text', content: '经济大势'},
-            {title: "正文字数", type: 'text', content: '1416 '},
-            {title: "编号", type: 'text', content: '14161190380'},
-          ]
+        content: "",
+        html: "",
+        isShowImg: false,
+      }
+    },
+    watch: {
+      articleData(oldData, newData) {
+        if (this.articleData) {
+          var html = this.articleData.articleType == 0 ? this.articleData.content : this.articleData.transContent
+          this.html = this.escape2Html(html)
         }
       }
     },
     methods: {
+      showImg(compareImage) {
+        this.isShowImg = compareImage
+      },
       getTitle() {
         return this.tableData.type == '1' ? '原文' : '转载'
       },
       goTo(item) {
 
-      }
+      },
+      escape2Html(str) {
+        var arrEntities = {'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"'};
+        return str.toString().replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) {
+          return arrEntities[t];
+        });
+      },
     },
     mounted() {
       var thiz = this;

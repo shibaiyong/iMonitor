@@ -9,52 +9,62 @@ import VueResource from 'vue-resource'
 
 
 import base from './assets/js/base'
-
-
 import './assets/css/common/common.css'
-// import 'font-awesome/css/font-awesome.min.css'
 import './assets/css/common/ZC_Common.css';
+import './assets/css/common/style_fontSize.css';
+import htmlToPdf from '@/components/utils/HtmlToPdf'
+import VueQuillEditor from 'vue-quill-editor'
+// require styles 引入样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
+Vue.use(VueQuillEditor);
+Vue.use(htmlToPdf);
+Vue.config.productionTip = false;
 
-Vue.config.productionTip = false
-
-Vue.use(ElementUI)
-Vue.use(VueResource)
-Vue.use(base)
+Vue.use(ElementUI);
+Vue.use(VueResource);
+Vue.use(base);
 
 Vue.directive('title', {
   inserted: function (el, binding) {
-    document.title = binding.value
+    document.title = 'iMonitor-'+binding.value
   }
-})
+});
+Vue.directive('loading_rzl', {
+  inserted: function (el, binding) {
+    document.getElementById('loading_rzl').style.display = binding.value ? 'block' : 'none';
+  }
+});
 
-Vue.prototype.getLineUnitWidth = function (num,hasSildBar){
-  if(hasSildBar){
-    return window.screen.width * 0.93 / num
-  }
-  return window.screen.width * 0.78 / num
-}
+// 拦截所有请求及响应,并进行处理.
+Vue.http.interceptors.push((request, next) => {
+  //此处this为请求所在页面的参数
 
-Vue.prototype.initPageSize = function () {
-  // console.log(this)
-  this.contentMarginLeft = window.screen.width * 0.15
-  this.sliderWidth = window.screen.width * 0.15 - 1
-  if (!this.showSiderbar) {
-    this.contentMarginLeft = 0
-    this.sliderWidth = 0
+  let token = localStorage.getItem('token');
+  if (token) {
+    // request.headers['token'] = token;
+    request.headers.set('token',token);
   }
-  this.contentWidth = window.screen.width - this.contentMarginLeft
-  var content = document.getElementsByClassName("showSiderbar")
-  var marginLeftpx = this.contentMarginLeft
-  setTimeout(function () {
-    if(content[0]){
-      var width = "calc(100% - " + marginLeftpx + "px)"
-      content[0].style.width = width
+
+  // console.log(request);
+  //在响应之后传给then之前对response进行修改和逻辑判断。对于token时候已过期的判断，就添加在此处，页面中任何一次http请求都会先调用此处方法　　　 　　
+  next((response) => {
+    let data = JSON.parse(response.bodyText);
+    let code = data.code;
+    // 状态为101,103时统一跳转至登陆页面
+    if (code == 103 || code == 101) {
+      //清除之前点击记录(包括侧边栏点击记录,时间选择记录)
+      window.localStorage.clear();
+      router.replace({
+        path: '/login'
+      });
+    } else {
+      return response;
     }
-  }, 200)
-}
-
-
+  });
+});
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

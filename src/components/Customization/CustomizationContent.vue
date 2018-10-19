@@ -1,54 +1,67 @@
 <template>
-  <div class="monitorCustomization">
-    <div class="choose">
-      <div class="choose-platform">
-        <span class=" left-title title">选择平台</span>
-        <div class="right-search">
-          <el-autocomplete
-            v-model="state4"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="输入平台名称"
-            @select="handleSelect"
-          ></el-autocomplete>
-          <i class="el-icon-search search-icon"/>
+  <div class="overView"
+       style="height: 100%;"
+       id="overView"
+       v-loading.fullscreen.lock="fullscreenLoading">
+    <div class="monitorCustomization">
+      <div class="block">
+        <div class="title">选择平台
+          <div class="right-search">
+            <el-autocomplete
+              v-model="state4"
+              :fetch-suggestions="querySearchAsync"
+              :trigger-on-focus="false"
+              placeholder="输入平台名称"
+              @select="handleSelect"
+            ></el-autocomplete>
+            <i class="el-icon-search search-icon"/>
+          </div>
         </div>
       </div>
-      <div class=" choose-item-box">
-        <chooseOptionList :listData="itemData" @selectListener="selectListener"/>
-      </div>
-      <div style="padding-bottom: 8px">
-        <el-row>
-          <el-col :span="2">
-            <div class="title" style="height: 50px;line-height: 50px;margin-left: 40px"> 已选平台</div>
-          </el-col>
-          <el-col :span="22">
-            <div class="show-choose-platform">
-              <div class="has-choose">
-                <span v-for="(item,index) in selectItemData" v-if="item.choose">{{getSelectListItemName(item.name)}}
-                      <i class="fa fa-times canClick" @click="deleteItem(index)"/>
+      <div class="choose">
+        <div class=" choose-item-box">
+          <chooseOptionList
+            :maxChoose="10"
+            :exceedMaxListener="exceedMaxListener"
+            :listData="itemData"
+            @selectListener="selectListener"
+            ref="chooseOptionList"/>
+        </div>
+        <div style="padding-bottom: 8px">
+          <el-row>
+            <el-col :span="2">
+              <div class="title1"> 已选平台</div>
+            </el-col>
+            <el-col :span="22">
+              <div class="show-choose-platform" id="show-choose-platform">
+                <div class="has-choose">
+                <span class="color_base" v-for="(item,index) in selectItemData">
+                  {{getSelectListItemName(item.name)}}
+                  <i class="choose_close" @click="deleteItem(index)"/>
                 </span>
-              </div>
-              <div class="has-choose-name">
-                <div class="box">
-                  <i>*</i>
-                  <div class="hint title">检测组名称</div>
-                  <input v-model="chooseName" placeholder="请输入名称"/>
-                  <div class="enter canClick" @click="addChooseList()">确定</div>
-                  <div class="cancel canClick" @click="clearHasChoose()">清空</div>
+                </div>
+                <div class="has-choose-name" id="has-choose-name">
+                  <div class="box">
+                    <i v-show="selectItemData.length>1">*</i>
+                    <div class="hint title1" v-show="selectItemData.length>1">监测组名称</div>
+                    <input v-model="chooseName" placeholder="请输入名称" v-show="selectItemData.length>1"/>
+                    <div class="enter bgc_base canClick" @click="addChooseList()">确定</div>
+                    <div class="cancel color_base canClick" @click="clearHasChoose()">清空</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <div class="show-box">
-      <div class="showList">
-        <div class="showList-title title">
-          已经添加的监测列表
+            </el-col>
+          </el-row>
         </div>
-        <div class="list-box">
-          <monitorList :listData="tableData"/>
+      </div>
+      <div class="show-box" id="show-box">
+        <div class="showList">
+          <div class="showList-title title" style="margin-left:10px">
+            已添加监测列表
+          </div>
+          <div class="list-box">
+            <monitorList :listData="tableData" :deleteListener="deleteListener"/>
+          </div>
         </div>
       </div>
     </div>
@@ -61,147 +74,219 @@
 
   export default {
 
-    data() {
+    data: function () {
       return {
         restaurants: [],
         state4: '',
         timeout: null,
         itemData: null,
-        selectItemData: null,
+        selectItemData: [],
         chooseName: "",
-        tableData: []
+        tableData: [],
+        fullscreenLoading: true,
       };
     },
+
     components: {chooseOptionList, monitorList},
-    methods: {
-      loadAll() {
-        return [
-          {"value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号"},
-          {"value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号"},
-          {"value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113"},
-          {"value": "泷千家(天山西路店)", "address": "天山西路438号"},
-          {"value": "胖仙女纸杯蛋糕（上海凌空店）", "address": "上海市长宁区金钟路968号1幢18号楼一层商铺18-101"},
-          {"value": "贡茶", "address": "上海市长宁区金钟路633号"},
-          {"value": "豪大大香鸡排超级奶爸", "address": "上海市嘉定区曹安公路曹安路1685号"},
-          {"value": "茶芝兰（奶茶，手抓饼）", "address": "上海市普陀区同普路1435号"},
-          {"value": "十二泷町", "address": "上海市北翟路1444弄81号B幢-107"},
-          {"value": "星移浓缩咖啡", "address": "上海市嘉定区新郁路817号"},
-          {"value": "阿姨奶茶/豪大大", "address": "嘉定区曹安路1611号"},
-          {"value": "新麦甜四季甜品炸鸡", "address": "嘉定区曹安公路2383弄55号"},
-          {"value": "Monica摩托主题咖啡店", "address": "嘉定区江桥镇曹安公路2409号1F，2383弄62号1F"},
-          {"value": "浮生若茶（凌空soho店）", "address": "上海长宁区金钟路968号9号楼地下一层"},
-          {"value": "NONO JUICE  鲜榨果汁", "address": "上海市长宁区天山西路119号"},
-          {"value": "CoCo都可(北新泾店）", "address": "上海市长宁区仙霞西路"},
-          {"value": "快乐柠檬（神州智慧店）", "address": "上海市长宁区天山西路567号1层R117号店铺"},
-          {"value": "Merci Paul cafe", "address": "上海市普陀区光复西路丹巴路28弄6号楼819"},
-          {"value": "猫山王（西郊百联店）", "address": "上海市长宁区仙霞西路88号第一层G05-F01-1-306"},
-          {"value": "枪会山", "address": "上海市普陀区棕榈路"},
-          {"value": "纵食", "address": "元丰天山花园(东门) 双流路267号"},
-          {"value": "钱记", "address": "上海市长宁区天山西路"},
-          {"value": "壹杯加", "address": "上海市长宁区通协路"},
-          {"value": "唦哇嘀咖", "address": "上海市长宁区新泾镇金钟路999号2幢（B幢）第01层第1-02A单元"},
-          {"value": "爱茜茜里(西郊百联)", "address": "长宁区仙霞西路88号1305室"},
-          {"value": "爱茜茜里(近铁广场)", "address": "上海市普陀区真北路818号近铁城市广场北区地下二楼N-B2-O2-C商铺"},
-          {"value": "鲜果榨汁（金沙江路和美广店）", "address": "普陀区金沙江路2239号金沙和美广场B1-10-6"},
-          {"value": "开心丽果（缤谷店）", "address": "上海市长宁区威宁路天山路341号"},
-          {"value": "超级鸡车（丰庄路店）", "address": "上海市嘉定区丰庄路240号"},
-          {"value": "妙生活果园（北新泾店）", "address": "长宁区新渔路144号"},
-          {"value": "香宜度麻辣香锅", "address": "长宁区淞虹路148号"},
-          {"value": "凡仔汉堡（老真北路店）", "address": "上海市普陀区老真北路160号"},
-          {"value": "港式小铺", "address": "上海市长宁区金钟路968号15楼15-105室"},
-          {"value": "蜀香源麻辣香锅（剑河路店）", "address": "剑河路443-1"},
-          {"value": "北京饺子馆", "address": "长宁区北新泾街道天山西路490-1号"},
-          {"value": "饭典*新简餐（凌空SOHO店）", "address": "上海市长宁区金钟路968号9号楼地下一层9-83室"},
-          {"value": "焦耳·川式快餐（金钟路店）", "address": "上海市金钟路633号地下一层甲部"},
-          {"value": "动力鸡车", "address": "长宁区仙霞西路299弄3号101B"},
-          {"value": "浏阳蒸菜", "address": "天山西路430号"},
-          {"value": "四海游龙（天山西路店）", "address": "上海市长宁区天山西路"},
-          {"value": "樱花食堂（凌空店）", "address": "上海市长宁区金钟路968号15楼15-105室"},
-          {"value": "壹分米客家传统调制米粉(天山店)", "address": "天山西路428号"},
-          {"value": "福荣祥烧腊（平溪路店）", "address": "上海市长宁区协和路福泉路255弄57-73号"},
-          {"value": "速记黄焖鸡米饭", "address": "上海市长宁区北新泾街道金钟路180号1层01号摊位"},
-          {"value": "红辣椒麻辣烫", "address": "上海市长宁区天山西路492号"},
-          {"value": "(小杨生煎)西郊百联餐厅", "address": "长宁区仙霞西路88号百联2楼"},
-          {"value": "阳阳麻辣烫", "address": "天山西路389号"},
-          {"value": "南拳妈妈龙虾盖浇饭", "address": "普陀区金沙江路1699号鑫乐惠美食广场A13"}
-        ];
+    watch: {
+      chooseName(oldData, newData) {
+        if (this.chooseName.length > 10) {
+          this.alert('监测组名称长度过长，最长为10个字符');
+          this.chooseName = this.chooseName.slice(0, 10)
+          return
+        }
       },
-      selectListener(index1, index2) {
-        var item = this.itemData[index1].items[index2]
+      selectItemData(oldData, newData) {
+        var dom1 = document.getElementById("has-choose-name")
+        var dom2 = document.getElementById("show-choose-platform")
+        var spanWidth = 0
+        for (var i = 0; i < this.selectItemData.length; i++) {
+          var length = this.selectItemData[i].name.length > 16 ? 37 + 12 * 16 : 37 + 12 * this.selectItemData[i].name.length
+          spanWidth = spanWidth + length + 20
+        }
+        if (spanWidth + 600 > dom2.offsetWidth) {
+          dom1.style.width = "100%"
+        } else {
+          dom1.style.width = "auto"
+        }
+      }
+    },
+    methods: {
+      deleteListener(id) {
+        this.deleteGroup(id)
+      },
+      selectListener(item) {
         if (item.choose) {
-          item.index1 = index1;
-          item.index2 = index2;
-          item.index = this.selectItemData.length;
           this.selectItemData.push(item)
         } else {
-          this.selectItemData.splice(item.index, 1);
           for (var i = 0; i < this.selectItemData.length; i++) {
-            this.selectItemData[i].index = i
+            if (this.selectItemData[i].id == item.id) {
+              this.selectItemData.splice(i, 1);
+              return
+            }
           }
         }
+
+
+      },
+      exceedMaxListener() {
+        this.alert('最多只能选择10个栏目');
+      },
+      loadTable() {
+        var thiz = this
+        thiz.fullscreenLoading=true
+        this.$http.get(this.baseUrl + "/customGroup/listByUser",).then(function (res) {
+          var response = JSON.parse(res.bodyText)
+          thiz.fullscreenLoading = false
+          if (response.code == "200" || response.code == 200) {
+            thiz.tableData = response.data
+          } else {
+            thiz.$message({message: '请求错误'});
+          }
+        }, function (err) {
+          thiz.fullscreenLoading = false
+          thiz.$message({message: '请求错误'});
+        })
+      },
+      createGroup() {
+
+        if (this.tableData.length == 10 || this.tableData.length > 10) {
+          this.alert('最多只能创建10组自定义检测组');
+          return
+        }
+
+        var thiz = this
+        var url = this.baseUrl + "/customGroup/create?";
+        url = url + "groupName=" + this.chooseName
+        for (var i = 0; i < this.selectItemData.length; i++) {
+          url = url + "&" + "platformList=" + this.selectItemData[i].id
+        }
+        this.fullscreenLoading=true
+        this.$http.get(url).then(function (res) {
+          thiz.fullscreenLoading=false
+          var response = JSON.parse(res.bodyText)
+          if (response.code == "200" || response.code == 200) {
+            thiz.$message({message: '添加成功'});
+            thiz.loadTable();
+          } else {
+            thiz.$message({message: '请求错误'});
+          }
+        }, function (err) {
+          thiz.fullscreenLoading=false
+          thiz.$message({message: '请求错误'});
+        })
+      },
+      deleteGroup(id) {
+
+        var params = {
+          groupId: id,
+        }
+        var thiz = this
+        this.$http.get(this.baseUrl + "/customGroup/deleteByGroupId", {params: params}).then(function (res) {
+          var response = JSON.parse(res.bodyText)
+          if (response.code == "200" || response.code == 200) {
+            thiz.$message({message: '删除成功'});
+            thiz.loadTable();
+          } else {
+            thiz.$message({message: '删除失败'});
+          }
+        }, function (err) {
+          thiz.$message({message: '请求错误'});
+        })
       },
       getItemDate() {
-        return [
-          {name: "网站", items: [{name: "名城苏州网", choose: false}, {choose: false}]},
-          {name: "App", items: [{name: "看苏州App", choose: false}, {name: "无线苏州App", choose: false}]},
-          {
-            name: "微信",
-            items: [{name: "微信栏目名称", choose: false}, {name: "微信栏目名称", choose: false}, {
-              name: "微信栏目名称",
-              choose: false
-            }, {name: "微信栏目名称", choose: false}, {name: "微信栏目名称", choose: false}, {
-              name: "微信栏目名称",
-              choose: false
-            }, {name: "微信栏目名称", choose: false}]
-          },
-          {
-            name: "微博",
-            items: [{name: "微信栏目名称", choose: false}, {name: "微信栏目名称", choose: false}, {
-              name: "微信栏目名称",
-              choose: false
-            }, {name: "微信栏目名称", choose: false}, {name: "微信栏目名称", choose: false}, {
-              name: "微信栏目名称",
-              choose: false
-            }]
-          },
-        ]
+        var params = {
+          pageNo: 1,
+          pageSize: 100,
+        }
+        var thiz = this
+        this.$http.get(this.baseUrl + "/platform/find", {params: params}).then(function (res) {
+          var response = JSON.parse(res.bodyText)
+          thiz.fullscreenLoading = false
+          if (response.code != 200) {
+            thiz.$message({message: '请求错误'});
+            return
+          }
+          var items = response.data.content
+          thiz.itemData = []
+          for (var i = 0; i < items.length; i++) {
+            var item = items[i]
+            var flag = -1;
+            for (var j = 0; j < thiz.itemData.length; j++) {
+              if (thiz.itemData[j].platformTypeId == item.platformTypeId) {
+                thiz.itemData[j].items.push(item)
+                flag = 1
+                break
+              }
+            }
+            if (flag == -1) {
+              thiz.itemData.push(
+                {
+                  name: item.platformTypeName,
+                  platformTypeId: item.platformTypeId,
+                  items: [item]
+                }
+              )
+            }
+          }
+          thiz.restaurants = []
+          for (var i = 0; i < thiz.itemData.length; i++) {
+            for (var j = 0; j < thiz.itemData[i].items.length; j++) {
+              var name = thiz.itemData[i].items[j].name
+              var id = thiz.itemData[i].items[j].id
+              thiz.restaurants.push({
+                value: name,
+                id: id
+              })
+            }
+          }
+        }, function (err) {
+          thiz.fullscreenLoading = false
+          thiz.$message({message: '请求错误'});
+        })
       },
       querySearchAsync(queryString, cb) {
+        queryString = this.trimAll(queryString)
+        if(queryString.length==0){
+          return
+        }
         var restaurants = this.restaurants;
         var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
-
         clearTimeout(this.timeout);
-        // this.timeout = setTimeout(() => {
+        if (!results || results.length == 0) {
+          results = [{
+            value: "无相关结果",
+            id: ""
+          }]
+        }
         cb(results);
-        // }, 3000 * Math.random());
       },
       clearHasChoose() {
-        this.selectItemData = []
-        for (var i = 0; i < this.itemData.length; i++) {
-          for (var j = 0; j < this.itemData[i].items.length; j++) {
-            this.itemData[i].items[j].choose = false
-          }
+        if (this.selectItemData.length == 0) {
+          return
         }
+        this.selectItemData = []
+        this.$refs.chooseOptionList.clear()
       },
       addChooseList() {
         var name = this.chooseName
-        if (name == "") {
-          alert("组名不能为空")
+        if (name == "" && this.selectItemData.length > 1) {
+          this.alert('监测组名称不能为空');
           return
+        }
+        if (name && name.length > 10) {
+          this.alert('监测组名称长度过长，最长为10个字符');
+          return
+        }
+        if (this.selectItemData.length == 1) {
+          this.chooseName = this.selectItemData[0].name
         }
         if (this.selectItemData.length == 0) {
-          alert("选项不能为空")
+          this.alert('请至少勾选一个栏目');
           return
         }
-        var content = []
-        for (var i = 0; i < this.selectItemData.length; i++) {
-          content.push(this.selectItemData[i].name)
-        }
-        this.tableData.push({
-          name: name,
-          items: content,
-          time: '2018/01/01 18:30'
-        })
+        this.createGroup();
+        this.chooseName = ""
         this.clearHasChoose()
       },
       createStateFilter(queryString) {
@@ -210,25 +295,28 @@
         };
       },
       handleSelect(item) {
-        console.log(item);
+        this.state4 = ""
+        if(item.id==""){
+          return
+        }
+        this.$refs.chooseOptionList.selectItemById(item.id)
       },
       getSelectListItemName(name) {
         return name.length > 16 ? name.slice(0, 15) + "..." : name
       },
       deleteItem(index) {
         var item = this.selectItemData[index]
-        var index1 = item.index1
-        var index2 = item.index2
-        this.itemData[index1].items[index2].choose = false
-        this.selectItemData.splice(index, 1);
+        this.$refs.chooseOptionList.deleteItem(item)
         for (var i = 0; i < this.selectItemData.length; i++) {
-          this.selectItemData[i].index = i
+          if (this.selectItemData[i].id == item.id) {
+            this.selectItemData.splice(i, 1);
+          }
         }
       }
     },
     mounted() {
-      this.restaurants = this.loadAll();
-      this.itemData = this.getItemDate();
+      this.getItemDate();
+      this.loadTable();
       this.selectItemData = [];
     }
   }
@@ -236,4 +324,225 @@
 
 <style scoped>
   @import '../../assets/css/Customization/monitorCustomization.css';
+
+  .monitorCustomization {
+    height: 100%;
+    background: #fff;
+  }
+
+  .monitorCustomization .canClick {
+    cursor: pointer;
+  }
+
+  .monitorCustomization .title {
+    /* font-size: 16px; */
+    font-weight: bolder;
+    color: #444;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+
+  .monitorCustomization .title1 {
+    /* font-size: 16px; */
+    font-weight: bolder;
+    color: #444;
+    height: 59px;
+    line-height: 59px;
+  }
+
+  .monitorCustomization .block {
+    background-color: #fff;
+    border-bottom: 1px #E2E3E4 solid;
+    margin: 0px 50px;
+    min-width: 1000px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /*margin-top: 5px;*/
+  }
+
+  .monitorCustomization .choose {
+    border-bottom: 1px solid #e2e3e4;
+    margin-top: 8px;
+    margin-left: 50px;
+    margin-right: 50px;
+    background: #fff;
+  }
+
+  .monitorCustomization .choose-platform {
+    /*margin-left: 50px;*/
+    /*margin-right: 50px;*/
+    height: 60px;
+    border-bottom: 1px solid #e2e3e4;
+  }
+
+  .monitorCustomization .choose-item-box {
+    height: 64%;
+    border-bottom: 1px solid #e2e3e4;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  .monitorCustomization .choose-platform .left-title {
+    float: left;
+    line-height: 60px;
+  }
+
+  .monitorCustomization .right-search {
+    float: right;
+    height: 31px;
+    position: relative;
+  }
+
+  .monitorCustomization .search-icon {
+    position: absolute;
+    right: 60px;
+    /* font-size: 22px; */
+    top: 5px;
+  }
+
+  .monitorCustomization .show {
+    border-top: 1px solid #e2e3e4;
+    border-bottom: 1px solid #e2e3e4;
+    background: #fff;
+    float: left;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .monitorCustomization .show-choose-platform {
+    margin-right: 40px;
+  }
+
+  .monitorCustomization .has-choose {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    line-height: 34px;
+    display: inline-block;
+  }
+
+  .monitorCustomization .has-choose-name {
+    float: right;
+    height: 50px;
+    display: inline;
+    text-align: center;
+  }
+
+  .monitorCustomization .has-choose-name .box {
+    margin-top: 5px;
+    height: 100%;
+  }
+
+  .monitorCustomization .has-choose-name .hint {
+    height: 50px;
+    display: inline-block;
+    line-height: 50px;
+  }
+
+  .monitorCustomization .has-choose-name i {
+    color: #fb5e5e;
+    margin-right: 15px;
+    /* font-size: 20px; */
+    font-weight: bold;
+  }
+
+  .monitorCustomization .has-choose-name input {
+    margin-left: 15px;
+    border-radius: 14px;
+    padding-left: 14px;
+    border: #c3c5c8 solid 1px;
+    width: 180px;
+    height: 32px;
+    /* font-size: 13px; */
+    margin-right: 40px;
+  }
+
+  .monitorCustomization .has-choose-name .enter {
+    margin-left: 30px;
+    height: 28px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    line-height: 28px;
+    width: 80px;
+    text-align: center;
+    display: inline-block;
+    color: white;
+    align-content: center;
+    border-radius: 8px;
+    border: #fff solid 1px;
+  }
+
+  .monitorCustomization .has-choose-name .cancel {
+    margin-left: 30px;
+    /* font-size: 10px; */
+    background: #fff;
+    height: 28px;
+    margin-top: 11px;
+    margin-bottom: 10px;
+    line-height: 28px;
+    width: 80px;
+    text-align: center;
+    display: inline-block;
+    align-content: center;
+    border-radius: 8px;
+    border: #3B87F5 solid 1px;
+  }
+
+  .monitorCustomization .has-choose span {
+    position: relative;
+    /* font-size: 10px; */
+    margin-left: 20px;
+    margin-top: 11px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    display: inline-block;
+    padding-left: 5px;
+    height: 20px;
+    line-height: 20px;
+    border: #3B87F5 solid 1px;
+    padding-right: 30px;
+    border-radius: 14px;
+  }
+  .monitorCustomization .choose_close{
+    width: 8px;
+    /* height: 16px; */
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: #3B87F5 url("../../assets/image/close.png") no-repeat center;
+    border-radius: 0px 10px 10px 0px;
+    border: #3B87F5 solid 1px;
+    line-height: 18px;
+    /* font-size: 5px; */
+    padding-right: 10px;
+    padding-left: 5px;
+    float: right;
+    color: white;
+    cursor: pointer;
+  }
+
+
+  .monitorCustomization .show-box {
+    border-top: 1px solid #e2e3e4;
+    border-bottom: 1px solid #e2e3e4;
+    background: #fff;
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-top: 8px;
+  }
+
+  .monitorCustomization .showList {
+
+  }
+
+  .monitorCustomization .showList-title {
+    height: 50px;
+    line-height: 50px;
+  }
+
+  .monitorCustomization .list-box {
+    padding: 30px;
+  }
+
+
 </style>

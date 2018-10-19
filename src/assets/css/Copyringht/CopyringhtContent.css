@@ -9,14 +9,51 @@
   padding-bottom: 15px;
 }
 
-.compare-copyright .buttonSelect {
+.compare-copyright .buttonNormal {
   display: inline-block;
   padding-right: 8px;
   padding-left: 8px;
-  margin-right: 25px;
   width: 100px;
   height: 33px;
-  border: #4643ff solid 1px;
+  border: #3B87F5 solid 1px;
+  border-radius: 8px;
+  line-height: 33px;
+  text-align: right;
+  cursor:pointer;
+}
+
+.compare-copyright .buttonNormal i {
+  font-size: 1.5rem;
+  height: 33px;
+  line-height: 33px;
+  float: left;
+  color: #3B87F5;
+  vertical-align: top;
+  display: inline-block;
+  margin-left: 2px;
+  cursor:pointer;
+}
+
+.compare-copyright .buttonNormal span {
+  float: left;
+  margin-left: 12px;
+  vertical-align: top;
+  display: inline-block;
+  height: 33px;
+  color: #3B87F5;
+  line-height: 33px;
+  /* font-size: 12px; */
+}
+
+.compare-copyright .buttonSelect {
+  cursor:pointer;
+  display: inline-block;
+  padding-right: 8px;
+  padding-left: 8px;
+  width: 100px;
+  height: 33px;
+  background: #3B87F5;
+  border: #3B87F5 solid 1px;
   border-radius: 8px;
   line-height: 33px;
   text-align: right;
@@ -27,7 +64,7 @@
   height: 33px;
   line-height: 33px;
   float: left;
-  color: #4643ff;
+  color: white;
   vertical-align: top;
   display: inline-block;
   margin-left: 2px;
@@ -39,45 +76,9 @@
   vertical-align: top;
   display: inline-block;
   height: 33px;
-  color: #4643ff;
-  line-height: 33px;
-  font-size: 12px;
-}
-
-.compare-copyright .buttonNormal {
-  display: inline-block;
-  padding-right: 8px;
-  padding-left: 8px;
-  margin-right: 25px;
-  width: 100px;
-  height: 33px;
-  background: #4643ff;
-  border: #4643ff solid 1px;
-  border-radius: 8px;
-  line-height: 33px;
-  text-align: right;
-}
-
-.compare-copyright .buttonNormal i {
-  font-size: 1.5rem;
-  height: 33px;
-  line-height: 33px;
-  float: left;
-  color: white;
-  vertical-align: top;
-  display: inline-block;
-  margin-left: 2px;
-}
-
-.compare-copyright .buttonNormal span {
-  float: left;
-  margin-left: 12px;
-  vertical-align: top;
-  display: inline-block;
-  height: 33px;
   color: #ffffff;
   line-height: 33px;
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 .compare-copyright span {
@@ -87,5 +88,5 @@
   height: 33px;
   color: #444;
   line-height: 33px;
-  font-size: 12px;
+  /* font-size: 12px; */
 }

@@ -33,7 +33,7 @@
 <script>
   import iM_Topbar from '@/components/common/iMTopbar.vue'
   import iM_Header from '@/components/common/iMHeader.vue'
-  import iM_Sidebar from '@/components/common/iMSidebar.vue'
+  import iM_Sidebar from '@/components/common/iMSidebar1.vue'
   import iM_Menu from '@/components/common/iMMenu.vue'
   import SpreadAnalyzeContent from './SpreadAnalyzeContent';
 
@@ -53,7 +53,7 @@
     },
     methods: {
       sidebarItemClick({isGroup, id}) {
-        // console.log('类型:'+isGroup+'\n'+'id:'+id);
+        // this.zc_log('类型:'+isGroup+'\n'+'id:'+id);
         this.isGroupPlantform = isGroup;
         this.plantformId = id;
       }

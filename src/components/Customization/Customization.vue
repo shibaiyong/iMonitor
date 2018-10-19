@@ -32,7 +32,7 @@
 <script>
   import iM_Topbar from '@/components/common/iMTopbar.vue'
   import iM_Header from '@/components/common/iMHeader.vue'
-  import iM_Sidebar from '@/components/common/iMSidebar.vue'
+  import iM_Sidebar from '@/components/common/iMSidebar1.vue'
   import iM_Menu from '@/components/common/iMMenu.vue'
   import CustomizationContent from './CustomizationContent.vue'
 
@@ -48,7 +48,7 @@
         sliderWidth: 0,
         headerData: [
           {path: '/', name: '首页'},
-          {path: '', name: '自定义监测项'},
+          {path: '', name: '定制监测项'},
         ]
       }
     },

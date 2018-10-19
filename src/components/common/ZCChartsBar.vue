@@ -10,7 +10,7 @@
 <script>
   import echarts from 'echarts'
 
-  let emphasisColor = ['#4642ff', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959']
+  let emphasisColor = ['#3B87F5', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959']
   let rankingNormalColor = ['rgba(250,89,89,0.8)', 'rgba(255,213,65,0.8)', 'rgba(72,221,49,0.8)']
   let rankingEmphasisColor = ['rgba(250,89,89,1)', 'rgba(255,213,65,1)', 'rgba(72,221,49,1)']
   let nomalColor = ['#99acfd', '#7be0fd']
@@ -60,7 +60,7 @@
       handleYTitle() {
         if (this.options.showRankingList && this.chartData.categoryArr) {
           for (var i = 0; i < this.chartData.categoryArr.length; i++) {
-            this.chartData.categoryArr[i] = (i + 1) + ' ' + this.chartData.categoryArr[i]
+            this.chartData.categoryArr[i] = (i + 1) + '. ' + this.chartData.categoryArr[i]
           }
           var maxLength = 0
           for (var i = 0; i < this.chartData.categoryArr.length; i++) {
@@ -102,22 +102,24 @@
             formatter(params) {
               if (params[0].componentType == "series") {
                 var format = '';
+                format += params[0].axisValue+ '<br>'
                 params.forEach(function (value, index) {
-                  if (thiz.options.showRankingList) {
-                    format += value.name.replace(/(\d+|\s+)/g, "");
-                  } else {
-                    format += value.name
-                  }
-                  format += '<br>'
-                  //拼接字符串
+                  // var formatter = ""
+                  // var name = !thiz.baseName?"文章篇数：":thiz.baseName
+                  // formatter = formatter + params.name + "："+params.percent +"%<br>"
+                  // formatter = formatter + params.marker + name + thiz.handleNum(params.value)
+
                   format += (value.marker + value.seriesName + ' : ')
+                  // 拼接数据
+                  format += parseInt(value.data)>=0? parseInt(value.data) :  parseInt(value.data.value);
                   //加换行符
                   if (value.seriesIndex != params.length - 1) {
                     format += '<br>'
                   }
                 })
-                var value = params[0].data.value ? params[0].data.value : params[0].value
-                return format + value;
+                // var value = params[0].data.value ? params[0].data.value : params[0].value
+                // return format + value;
+                return format;
               }
             },
           },
@@ -146,8 +148,8 @@
               interval: 0,
               // align: "center",
               rotate:30,
-              showMinLabel: true,
-              showMaxLabel: true,
+              // showMinLabel: true,
+              // showMaxLabel: true,
               margin:10,
               // formatter: [
               //   '{a|AAa\nasd}',
@@ -223,6 +225,21 @@
                 baseline: 'middle'
               }
             } : {
+              formatter: function (value, index) {
+               var text = ""
+                if(value.length>16){
+                  value=value.substr(0,15)+"..."
+                }
+                if(value.length>8){
+                 var herfLength =parseInt(value.length/2)
+                  var value1=value.substr(0,herfLength)
+                  var value2=value.substr(herfLength,value.length-herfLength)
+                  text = value1+"\r\n"+"\r\n"+value2
+                }else {
+                  text=value
+                }
+                return text;
+              },
               color: '#444',
               margin:10
             },
@@ -321,12 +338,13 @@
 
       var thiz = this;
       barChart.on('click', function (params) {
-        // console.log(params)
+        // this.zc_log(params)
         if (params.componentType == 'series' && params.componentSubType == 'bar') {
           if (params.value) {
             thiz.$emit('click-barchart', {
               name: params.name,
-              index: params.dataIndex
+              index: params.dataIndex,
+              seriesName: params.seriesName,
             });
           }
         }

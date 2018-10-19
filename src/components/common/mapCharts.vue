@@ -1,5 +1,5 @@
 <template>
-  <div :id="idName" ref="map" ></div>
+  <div :id="idName" ref="map" style="background-color: #fff;"></div>
 </template>
 
 <script>
@@ -11,7 +11,9 @@
     props: {
       chartData: {type: Array, require: true},
       height: {type: Number / String, require: true},
-      idName: {type: String, require: true}
+      idName: {type: String, require: true},
+      showProvice:{type:Boolean,require:false,default:true},
+      showName:{type:String,require:false}
     },
     data() {
       return {
@@ -34,17 +36,21 @@
             tooltip: {
               show: true,
               textStyle: {
-                color: '#000'
+                color: '#000',
+                cursor: 'auto'
               },
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              extraCssText: 'box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);text-align: center',
+              backgroundColor: "#FFF",
+              extraCssText: 'box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);text-align: left',
               formatter(params) {
-                // console.log('地图参数')
-                // console.log(params);
-                return params.name + '<br>' + params.seriesName + ':' + (params.value ? params.value : '-')
+                var str = ""
+                str = params.name + '<br>'+ params.seriesName + ':' + (params.value ? params.value : '-')
+                // this.zc_log('地图参数')
+                // this.zc_log(params);
+                return str
               }
             },
             visualMap: {
+              show:false,
               min: 0,
               max: thiz.max,
               left: 'left',
@@ -52,7 +58,7 @@
               text: ['高', '低'],
               // seriesIndex: [1],
               inRange: {
-                color: ['#fff', '#4642ff']
+                color: ['#fff', '#3B87F5']
               },
               orient: 'horizontal',
               inverse: true,
@@ -61,10 +67,8 @@
               show: true,
               map: 'china',
               roam: false,
-              // left: '30',
-              // right: "30",
-              // bottom: 'auto',
-              // top:0,
+              aspectScale:0.75,
+              layoutCenter:'height',
               itemStyle: {
                 areaColor: '#f4f4f4',
                 borderColor: '#fff',
@@ -72,7 +76,7 @@
                 shadowBlur: 0
               },
               label: {
-                show: true,
+                show: this.showProvice?true:false,
                 verticalAlign: 'top',
                 align: 'center',
                 fontSize: 10
@@ -81,7 +85,7 @@
             series: [
               {
                 type: 'map',
-                name: '文章转载篇数',
+                name: this.showName?this.showName:'文章转载篇数',
                 geoIndex: 0,
                 data: thiz.provincesData,
               }
@@ -102,7 +106,7 @@
 
         this.provincesData.forEach(function (province) {
           data.forEach(function (dataItem) {
-            // console.log(`province.name=${province.name},dataItem.name=${dataItem.name}`)
+            // this.zc_log(`province.name=${province.name},dataItem.name=${dataItem.name}`)
             if (dataItem.name.indexOf(province.name) != -1) {
               province.value = dataItem.value;
             }
@@ -111,8 +115,8 @@
             }
           })
         });
-        // console.log(this.provincesData)
-        thiz.mapSelected(this.cutProvinceName(data[0].name), 0);
+        // this.zc_log(this.provincesData)
+        // thiz.mapSelected(this.cutProvinceName(data[0].name), 0);
       },
 
       mapSelected(name, index) {
@@ -137,7 +141,7 @@
 
       var thiz = this;
       mapChart.on('click', function (params) {
-        // console.log(params)
+        // this.zc_log(params)
         if (params.componentType == 'series' && params.componentSubType == 'map') {
           if (params.value) {
             thiz.mapSelected(params.name, params.dataIndex)

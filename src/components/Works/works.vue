@@ -3,7 +3,7 @@
     <!--顶部-->
     <iM_Topbar></iM_Topbar>
     <!--头部-->
-    <iM_Header></iM_Header>
+    <iM_Header @click-datepicker="clickDatePicker"></iM_Header>
 
     <div id="main">
       <!--侧边栏-->
@@ -21,7 +21,8 @@
           <!--详情部分-->
           <div id="content_page" :class="showMenu?'showMenu':'hiddenMenu'">
             <!--此处放置页面-->
-            <WorksContent></WorksContent>
+            <WorksContent
+              :datePickerParams="datePickerParams"/>
           </div>
         </div>
       </div>
@@ -33,7 +34,7 @@
 <script>
   import iM_Topbar from '@/components/common/iMTopbar.vue'
   import iM_Header from '@/components/common/iMHeader.vue'
-  import iM_Sidebar from '@/components/common/iMSidebar.vue'
+  import iM_Sidebar from '@/components/common/iMSidebar1.vue'
   import iM_Menu from '@/components/common/iMMenu.vue'
   import WorksContent from './WorksContent';
 
@@ -42,12 +43,18 @@
     components: {iM_Topbar, iM_Header, iM_Sidebar, iM_Menu, WorksContent},
     data() {
       return {
-        showSiderbar: true,
+        showSiderbar: false,
         showMenu: true,
         contentWidth: 0,
         contentMarginLeft: 0,
-        sliderWidth: 0
+        sliderWidth: 0,
+        datePickerParams: null,
       }
+    },
+    methods: {
+      clickDatePicker({type, time}) {
+        this.datePickerParams = {startTime:time,accountType:type.toString()};
+      },
     },
     created() {
       this.initPageSize()

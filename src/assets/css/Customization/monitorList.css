@@ -12,7 +12,9 @@
 }
 
 .monitorList .items {
-
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   width: 24%;
 }
 
@@ -22,14 +24,16 @@
 
 .monitorList .del {
   width: 14%;
+  cursor:pointer;
 }
 
 .monitorList .monitorList-header div {
   display: inline-block;
+  vertical-align:top;
   height: 45px;
   line-height: 45px;
   text-align: center;
-  font-size: 13px;
+  /* font-size: 13px; */
   font-weight: bold;
 }
 
@@ -40,20 +44,22 @@
 .monitorList .monitorList-item {
   border-top: 1px solid #F4f4f4;
 }
+
 .monitorList .list-box-none {
   border-bottom: #F4f4f4 1px solid;
   text-align: center;
-  font-size: 14px;
+  /* font-size: 14px; */
   height: 45px;
   line-height: 45px;
 }
 
 .monitorList .monitorList-item div {
   display: inline-block;
+  vertical-align:top;
   height: 45px;
   line-height: 45px;
   text-align: center;
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 .monitorList .delete {

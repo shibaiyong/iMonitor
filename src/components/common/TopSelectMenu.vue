@@ -4,7 +4,7 @@
       <el-col :span="item.text?2:1" @click.native="select(index)" v-for="(item,index) in data" :key="item.text+index"
               style="text-align: center">
         <div class="item" :class="{select:item.select}" v-if="item.text">{{item.text}}</div>
-        <div class="item" v-if="!item.text"></div>
+        <div class="item" v-if="!item.text" style="cursor:default"></div>
       </el-col>
     </el-row>
   </div>
@@ -42,7 +42,7 @@
         this.data = this.data.concat(this.menuData2)
       }
       this.width = 24 / this.data.length
-      // console.log(this.width)
+      // this.zc_log(this.width)
     }
   }
 </script>

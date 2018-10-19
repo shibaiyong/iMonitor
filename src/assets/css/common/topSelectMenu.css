@@ -7,11 +7,12 @@
   height: 40px;
   line-height: 40px;
   padding: 5px;
-  font-size: 14px;
+  /* font-size: 14px; */
   font-weight: bold;
+  cursor: pointer;
 }
 
 .topSelectTop .select {
-  border-bottom: 2px #4642ff solid;
-  color: #4642ff;
+  border-bottom: 2px #3B87F5 solid;
+  color: #3B87F5;
 }

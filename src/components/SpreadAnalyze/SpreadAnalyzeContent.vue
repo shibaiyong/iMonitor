@@ -28,6 +28,7 @@
     <div id="analyze" class="analyze">
     </div>
     <div class="explain">圆圈直径越大表示其传播能力越强。线条越短表示转载时间越早，线条越粗表示相似度越高。</div>
+  <div class="add-button bgc_base" @click="openAddPage">添加</div>
   </div>
 </template>
 
@@ -83,6 +84,9 @@
           this.echartsObj.clear()
         }
         this.articleTitle = ""
+      },
+      openAddPage(){
+        window.open("/addArticle")
       },
       articleSearch(queryString, callback) {
         if (this.timeCode != -1) {
@@ -361,7 +365,7 @@
         for (var i = 0; i < article.length; i++) {
           nodes.push({
             name: article[i].id,
-            category: article[i].categories,
+            category: article[i].categories-1,
             symbol: "circle",
             symbolSize: article[i].realSize,
             x: article[i].x * 1.5,
@@ -583,7 +587,7 @@
 
   .spreadAnalyze .title-bar span {
     float: right;
-    font-size: 18px;
+    /* font-size: 18px; */
     font-weight: bold;
     margin-right: 60px;
     max-width: 600px;
@@ -605,6 +609,18 @@
     width: 300px;
     border-radius: 50px;
   }
-
+  .spreadAnalyze .add-button {
+    cursor: pointer;
+    height: 34px;
+    line-height: 34px;
+    /* font-size: 16px; */
+    text-align: center;
+    width: 80px;
+    color: white;
+    border-radius: 10px;
+    top: 10px;
+    right: 40px;
+    position: absolute;
+  }
 
 </style>

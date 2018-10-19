@@ -19,7 +19,7 @@
       return {
         menuData:[
           {name:'传播情况总览',path:'/'},
-          {name:'热门作品',path:'/hotwork'},
+          {name:'作品列表',path:'/hotwork'},
           {name:'传播趋势分析',path:'/trend'},
           {name:'传播地域分析',path:'/region'},
           {name:'媒体转载分析',path:'/reprint'},
@@ -70,10 +70,10 @@
     text-align: center;
     cursor: pointer;
     color: #444444;
-    font-size: 16px;
+    /* font-size: 16px; */
   }
   .menu_item:hover{
-    color: #4642ff;
+    color: #3B87F5;
     font-weight: 900;
   }
 
@@ -82,6 +82,6 @@
     height: 53px;
   }
   .menu_item_selected{
-    border-bottom: #4642ff 5px solid;
+    border-bottom: #3B87F5 5px solid;
   }
 </style>

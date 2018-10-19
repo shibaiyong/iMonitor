@@ -6,7 +6,6 @@
 <script>
   import echarts from 'echarts'
 
-  let showLabel = true;
   export default {
     name: "z-c-charts-pie",
     props: {
@@ -14,15 +13,6 @@
       idName: {type: String, require: true},
       chartData: {type: Array, require: true},
       baseName: {type: String, require: false},
-      options: {
-        type: Object,
-        require: false,
-        default() {
-          return {
-            radius: [90, 106]
-          }
-        }
-      }
     },
     data() {
       return {
@@ -47,29 +37,28 @@
         return [{
           itemStyle: {
             borderColor: "#ffffff",
-            borderWidth: 5,
+            borderWidth: this.chartData.length>1?5:0,
           },
           type: 'pie',
           hoverOffset: 5,
           minAngle: 5,
           avoidLabelOverlap: true,
           center: ['50%', '50%'],
-          radius: this.options.radius,
-          labelLine: {
-            show: false
-          },
+          radius: this.chartData.length>1?['80%', '95%']:['85%','95%'],
+          label:{show:false,},
           data: this.setupData(),
-
-          // stillShowZeroSum:false
         }];
       },
 
       setupOptions() {
-        var data = this.setupData();
-        var thiz = this;
+        let data = this.setupData();
+        let thiz = this;
         return {
-          color: ['#4642ff', '#00c6ff', '#46dd31', '#ffd541', '#ff9241', '#fb5959', '#9659fb',
-            '#99acf6', '#7be0fd', '#6fff5b', '#ffd541', '#ffa664', '#ff7777', '#b080ff'],
+          color: [
+            '#3B87F5', '#E5833B', '#6BC231', '#41CBF3', '#E14F5B', '#9D71EA',
+            '#9659fb', '#99acf6', '#7be0fd', '#6fff5b', '#ffd541', '#ffa664',
+            '#ff7777', '#b080ff'
+          ],
           tooltip: {
             show: true,
             padding: 10,
@@ -77,30 +66,36 @@
             textStyle: {color: '#444'},
             extraCssText: 'box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.2);',
             formatter(params) {
-              //console.log(params);
+              //this.zc_log(params);
               var formatter = ""
               var name = !thiz.baseName?"文章篇数：":thiz.baseName
               formatter = formatter + params.name + "："+params.percent +"%<br>"
-              formatter = formatter + params.marker + name +": "+ params.value
+              formatter = formatter + params.marker + name + thiz.handleNum(params.value)
               return formatter
             },
           },
-          label: {
-            show: showLabel,
-            align: 'center',
-            formatter: function (params) {
-              var total = 0;
-              var percent = 0;
-              data.forEach(function (value) {
-                total += value.value;
+          legend:{
+            show:true,
+            left:0,
+            top:0,
+            orient:'vertical',
+            formatter(params){
+              let total = 0;
+              let current = 0;
+              thiz.chartData.forEach(function (item,index) {
+                total += parseInt(item.value);
+                if(item.name === params){
+                  current = parseInt(item.value);
+                }
               });
-              percent = ((params.value / total) * 100).toFixed(2);
+              thiz.zc_log('total='+total);
+              thiz.zc_log('current='+current);
 
-              return '{title|' + params.name + ':' + '}  {per|' + percent + '%}\n'
-            },
-            rich: {
-              title: {color: '#444', align: 'center', fontSize: 15},
-              per: {align: 'center', fontSize: 15, padding: [0, 0, 0, 0]}
+              if(total === 0){
+                return params + ' 0.00%'
+              }else {
+                return params+' '+(current/total*100).toFixed(2)+'%';
+              }
             }
           },
           series: this.setupSeries()
@@ -124,17 +119,17 @@
 
       var thiz = this;
       pieChart.on('pieselectchanged ', function (params) {
-        //console.log(params);
+        //this.zc_log(params);
       });
       pieChart.on('pieselected ', function (params) {
-        //console.log(params);
+        //this.zc_log(params);
       });
       pieChart.on('pieunselected ', function (params) {
-        //console.log(params);
+        //this.zc_log(params);
       });
 
       pieChart.on('click', function (params) {
-        // //console.log(params)
+        // //this.zc_log(params)
         if (params.componentType == 'series' && params.componentSubType == 'pie') {
           if (params.value) {
             thiz.$emit('click-piechart', {

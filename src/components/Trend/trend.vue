@@ -21,10 +21,9 @@
           <!--详情部分-->
           <div id="content_page" :class="showMenu?'showMenu':'hiddenMenu'">
             <!--此处放置页面-->
-            <TrendContent :isGroupPlantform="isGroupPlantform"
+            <TrendContent :sidebarType="sidebarType"
                             :plantformId="plantformId"
-                            :startTime="startTime"
-                            :accountType="accountType">
+                            :datePickerParams="datePickerParams">
             </TrendContent>
           </div>
         </div>
@@ -36,7 +35,7 @@
 <script>
   import iM_Topbar from '@/components/common/iMTopbar.vue'
   import iM_Header from '@/components/common/iMHeader.vue'
-  import iM_Sidebar from '@/components/common/iMSidebar.vue'
+  import iM_Sidebar from '@/components/common/iMSidebar1.vue'
   import iM_Menu from '@/components/common/iMMenu.vue'
   import TrendContent from './TrendContent';
 
@@ -50,21 +49,19 @@
         contentWidth: 0,
         contentMarginLeft: 0,
         sliderWidth: 0,
-        isGroupPlantform:false,
+        sidebarType:null,
         plantformId:'',
-        startTime:'',
-        accountType:''
+        datePickerParams:{}
       }
     },
     methods:{
       clickDatePicker({type,time}){
-        // console.log('时间类型:'+type+'\n'+'开始时间:'+time);
-        this.accountType = type.toString();
-        this.startTime = time;
+        // this.zc_log('时间类型:'+type+'\n'+'开始时间:'+time);
+        this.datePickerParams = {startTime:time,accountType:type.toString()};
       },
-      sidebarItemClick({isGroup,id}){
-        // console.log('类型:'+isGroup+'\n'+'id:'+id);
-        this.isGroupPlantform = isGroup;
+      sidebarItemClick({type,id}){
+        // this.zc_log('类型:'+isGroup+'\n'+'id:'+id);
+        this.sidebarType = type;
         this.plantformId = id;
       }
     },

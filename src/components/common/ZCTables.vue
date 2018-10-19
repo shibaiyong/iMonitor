@@ -36,11 +36,12 @@
         </el-table-column>
 
         <el-table-column v-for="(item,index) in columnData"
-                         :prop="item.prop"
-                         :label="item.label"
-                         :key="item.prop"
-                         :width="setupColumnWidth(index)"
-                         :align="setupColumnAlign(index)">
+                        :render-header="item.msg?renderProductId:renderProductIds"
+                        :prop="item.prop"
+                        :label="item.label"
+                        :key="item.prop"
+                        :width="setupColumnWidth(index)"
+                        :align="setupColumnAlign(index)">
         </el-table-column>
 
         <el-table-column ref="typeColumn_trailing"
@@ -50,10 +51,11 @@
 
         <el-table-column v-if="options.handleTitle" width="100px">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="handleEdit(scope.$index, scope)">{{options.handleTitle}}
-            </el-button>
+
+            <div class="handleTitle fontSize13"
+                 style="float:left;border: 1px solid #9b9b9b;border-radius: 13px;color: #9b9b9b;padding: 0 10px;cursor: pointer"
+                 @click="handleEdit(scope.$index, scope)">{{options.handleTitle}}</div>
+
           </template>
         </el-table-column>
 
@@ -141,7 +143,9 @@
         selectedValue: 0,//当前筛选项
         currentPage: 1,  //当前页码
         pageSize: 10,   //每页数据条数
-        sortingIndex: undefined //排序index
+        sortingIndex: undefined, //排序index
+        descOrAsc:'1',
+        outerText:[]
       }
     },
     computed: {
@@ -155,28 +159,88 @@
       }
     },
     methods: {
+      //添加排序图标
+      renderProductId(h, {column, $index}){
+        let that=this
+        return (
+            <span onClick={this.changesLoad}>
+              {column.label}
+              <i class='el-icon-caret-bottom' style="display:contents" onClick={this.eventFalse}></i>
+            </span>
+        )
+      },
+      //转换伪数组
+      makeArray(obj){
+        var rs=[],len=obj.length;
+        try{
+          rs = [].slice.call(obj,0);
+        }catch(e){ //for IE
+          for(var i=0;j=obj[i++];){
+            rs.push(j);
+          }
+        }
+        return rs;
+      },
+      eventFalse(e){
+        e.stopPropagation()
+        return false
+      },
+      //上下图标切换
+      changesLoad(e){
+          this.outerText.push(e.toElement.outerText)
+          let arrTr=this.makeArray(e.path[3].children)
+          let forTr=[]
+          let styleBottom='el-icon-caret-bottom'
+          let styleTop='el-icon-caret-top'
+          arrTr.forEach(item=>{//移除多余tr
+            if(item.className!='gutter'){
+              forTr.push(item)
+            }
+          })
+          if(this.outerText.length>2){
+            this.outerText.splice(0,1)
+          }
+          e.toElement.childNodes[1].className==styleBottom?this.descOrAsc='1':this.descOrAsc='2'
+          if(this.outerText[0]==this.outerText[1]){
+            e.toElement.childNodes[1].className==styleBottom?e.toElement.childNodes[1].className=styleTop:e.toElement.childNodes[1].className=styleBottom
+            e.toElement.childNodes[1].className==styleBottom?this.descOrAsc='1':this.descOrAsc='2'
 
+          }else{
+            forTr.forEach(item => {
+                if(item.children[0].children[0].children[0].className!=''){
+                item.children[0].children[0].children[0].className=styleBottom
+              }
+            })
+
+          }
+          // this.updateDatas()
+      },
+      //添加标签
+      renderProductIds(h, {column}){
+        return h('span', [
+            h('span', column.label),
+        ]);
+      },
       //**********************外部数据刷新方法*******************************
       updateDatas() {
         this.$emit('refresh-data', {
           selected: this.selectedValue,
           currentPage: this.currentPage,
           pageSize: this.pageSize,
-          sortingIndex: this.sortingIndex
+          sortingIndex: this.sortingIndex,
+          descOrAsc:this.descOrAsc
         })
       },
 
-
       //**********************el-select部分的方法*******************************
       selectHasChanged(value) {
-        // console.log('selectHasChanged')
+        // this.zc_log('selectHasChanged')
         //记录当前被选中的筛选项并执行外部刷新数据操作
         this.selectedValue = value;
-        if (this.currentPage == 1) {
-          this.handleCurrentChange(1);
-        } else {
+        if (this.currentPage != 1) {
           this.currentPage = 1;
         }
+        this.handleCurrentChange(1);
       },
 
       //**********************el-table部分的方法*******************************
@@ -253,6 +317,7 @@
             }
           }
         }
+        // console.log(cellStyle)
         return cellStyle;
       },
 
@@ -310,18 +375,20 @@
 
       //表头点击事件监听
       headerClick(column) {
-        // console.log('headerClick')
+
+        // this.zc_log('headerClick')
         //记录当前被点击的columnIndex
         for (var i = 0; i < this.columnData.length; i++) {
           if (this.columnData[i].prop == column.property) {
             this.sortingIndex = i;
-          }
+         }
         }
         if (this.currentPage == 1) {
           this.handleCurrentChange(1);
         } else {
           this.currentPage = 1;
         }
+
       },
 
       //表格点击事件监听
@@ -337,13 +404,12 @@
       //**********************分页部分的方法*******************************
       //分页容量对应监听方法
       handleSizeChange(val) {
-        // console.log('handleSizeChange');
+        // this.zc_log('handleSizeChange');
         this.pageSize = val;
-        if (this.currentPage == 1) {
-          this.handleCurrentChange(1);
-        } else {
+        if (this.currentPage != 1) {
           this.currentPage = 1;
         }
+        this.handleCurrentChange(1);
       },
 
       //分页器更换对应监听方法
@@ -368,7 +434,7 @@
 
   .zctables_title {
     background-color: white;
-    font-size: 15px;
+    /* font-size: 15px; */
     color: #000;
     margin: 0;
     padding: 0;
@@ -378,7 +444,7 @@
 
   .zctables .zctables_select {
     background-color: white;
-    font-size: 15px;
+    /* font-size: 15px; */
     color: #111111;
     padding: 0;
     margin: -10px 0 10px 0;
@@ -395,4 +461,17 @@
     text-overflow: ellipsis!important;
   }
 
+  /*分页效果样式复写*/
+.el-pagination.is-background .btn-next,
+.el-pagination.is-background .btn-prev,
+.el-pagination.is-background .el-pager li{
+  background: none;
+  color: #606266;
+  border: 1px solid #E2E3E4;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active{
+  background: none;
+  color: #3B87F5;
+  border: 1px solid #3B87F5;
+}
 </style>

@@ -1,19 +1,23 @@
 <template>
-  <div class="copyRightTables">
+  <div class="copyRightTables" v-if="tableData">
+    <div class="title-box" style="margin-bottom: 5px">
+      <span class="title">  {{titleType}}</span>
+      <span class="title-name"> {{title}}</span>
+    </div>
     <div class="title-box">
-      <span class="title">  {{getTitle()}}</span>
-      <span class="title-name"> {{this.tableData.title}}</span>
+      <span class="title">  {{transTitleType}}</span>
+      <span class="title-name"> {{transTitle}}</span>
     </div>
     <div class="list">
-      <div class="item" v-for="item in this.tableData.items">
+      <div class="item" v-for="item in items">
         <div class="title">
           {{item.title}}
         </div>
-        <div class="content" >
+        <div class="content">
           <div v-if="item.type=='text'">
             {{item.content}}
           </div>
-          <a :href="item.content" v-if="item.type=='url'" style="color: #4643ff">
+          <a :href="item.content" v-if="item.type=='url'" style="color: #3B87F5">
             {{item.content}}
           </a>
         </div>
@@ -25,36 +29,63 @@
 <script>
   export default {
     name: "copy-right-tables",
+    props: ["tableData"],
     data() {
       return {
-        tableData: {
-          type: '1',
-          title: '名城苏州网',
-          items: [
-            {title: "标题", type: 'text', content: '严查银行股东代持 '},
-            {title: "发布链接", type: 'url', content: 'http://www.baidu.com'},
-            {title: "发布时间", type: 'text', content: '2017/07/23 15:84'},
-            {title: "发布终端", type: 'text', content: ''},
-            {title: "发布版块", type: 'text', content: '经济大势'},
-            {title: "正文字数", type: 'text', content: '1416 '},
-            {title: "编号", type: 'text', content: '14161190380'},
-          ]
+        items: [],
+        title: "",
+        titleType: "",
+        transTitle:'',
+        transTitleType:''
+      }
+    },
+    watch: {
+      tableData(oldData, newData) {
+        if (this.tableData) {
+          var isOrigin = this.tableData.articleType == 0 ? true : false;
+          this.title = isOrigin ? this.tableData.platformName : this.tableData.mediaName;
+          this.titleType = isOrigin ? "本文" : "本文";
+          this.transTitle = isOrigin ? this.tableData.source : this.tableData.transAnnotationSource;
+          this.transTitleType = isOrigin ? "来源" : "来源";
+
+          this.items = [];
+          this.items.push({
+            title: "标题",
+            type: 'text',
+            content: isOrigin ? this.tableData.title : this.tableData.transTitle
+          });
+          this.items.push({
+            title: "发布链接",
+            type: 'url',
+            content: isOrigin ? this.tableData.url : this.tableData.transUrl
+          });
+          this.items.push({
+            title: "发布时间",
+            type: 'text',
+            content: isOrigin ? this.tableData.publishTime : this.tableData.transPublishTime
+          });
+          this.items.push({
+            title: "正文字数",
+            type: 'text',
+            content: isOrigin ? this.tableData.contentNum : this.tableData.transContentNum
+          });
+          if (isOrigin) {
+            this.items.push({title: "编号", type: 'text', content:this.tableData.unionId})
+          } else {
+            this.items.push({title: "版权存疑", type: 'text', content: this.tableData.isTort=="1"?"注明来源":"版权存疑"})
+          }
         }
       }
     },
     methods: {
-      getTitle() {
-        return this.tableData.type == '1' ? '原文' : '转载'
-      },
       goTo(item) {
 
       }
     },
     mounted() {
-      var thiz = this;
       this.goTo = (item) => {
         if (item.type == 'url') {
-          window.location.href = item.url;
+          window.open(item.url)
         }
       }
     }
